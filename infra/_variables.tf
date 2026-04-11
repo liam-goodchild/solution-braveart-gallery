@@ -7,7 +7,7 @@ variable "subscription_id" {
 variable "project" {
   description = "Short project name used in resource naming"
   type        = string
-  default     = "bbgart"
+  default     = "braveart"
 }
 
 variable "environment" {
@@ -41,10 +41,4 @@ variable "tags" {
     project     = "buffy-braveart-gallery"
     environment = "production"
   }
-}
-
-variable "stripe_secret_key" {
-  description = "Stripe secret key for checkout"
-  type        = string
-  sensitive   = true
 }

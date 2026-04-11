@@ -6,14 +6,6 @@ output "storage_account_name" {
   value = azurerm_storage_account.this.name
 }
 
-output "key_vault_name" {
-  value = azurerm_key_vault.this.name
-}
-
-output "key_vault_uri" {
-  value = azurerm_key_vault.this.vault_uri
-}
-
 output "swa_name" {
   value = azurerm_static_web_app.this.name
 }

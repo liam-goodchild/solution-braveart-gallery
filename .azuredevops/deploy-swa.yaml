@@ -1,0 +1,88 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - frontend/*
+      - functions/*
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - group: braveart-prd
+
+stages:
+  - stage: Build
+    displayName: Build
+    jobs:
+      - job: Build
+        displayName: Build API
+        steps:
+          - task: NodeTool@0
+            displayName: Use Node.js 20
+            inputs:
+              versionSpec: 20.x
+
+          - script: npm ci
+            displayName: Install API Dependencies
+            workingDirectory: $(System.DefaultWorkingDirectory)/functions
+
+          - publish: $(System.DefaultWorkingDirectory)/frontend
+            artifact: frontend
+            displayName: Publish Frontend
+
+          - publish: $(System.DefaultWorkingDirectory)/functions
+            artifact: functions
+            displayName: Publish Functions
+
+  - stage: Deploy
+    displayName: Deploy to SWA
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - deployment: Deploy
+        displayName: Deploy
+        environment: braveart-prd
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: frontend
+                  displayName: Download Frontend
+
+                - download: current
+                  artifact: functions
+                  displayName: Download Functions
+
+                - task: AzureStaticWebApp@0
+                  displayName: Deploy Static Web App
+                  inputs:
+                    app_location: $(Pipeline.Workspace)/frontend
+                    api_location: $(Pipeline.Workspace)/functions
+                    skip_app_build: true
+                    skip_api_build: true
+                  env:
+                    azure_static_web_apps_api_token: $(swaDeploymentToken)
+
+                - task: AzureCLI@2
+                  displayName: Sync App Settings to SWA
+                  inputs:
+                    azureSubscription: $(serviceConnection)
+                    scriptType: bash
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      SWA_NAME="stapp-braveart-prd-uks-01"
+                      RG_NAME="rg-braveart-prd-uks-01"
+
+                      az staticwebapp appsettings set \
+                        --name $SWA_NAME \
+                        --resource-group $RG_NAME \
+                        --setting-names \
+                          "STORAGE_CONNECTION_STRING=$(STORAGE_CONNECTION_STRING)" \
+                          "STORAGE_ACCOUNT_NAME=$(STORAGE_ACCOUNT_NAME)" \
+                          "STORAGE_ACCOUNT_KEY=$(STORAGE_ACCOUNT_KEY)" \
+                          "STRIPE_SECRET_KEY=$(STRIPE_SECRET_KEY)" \
+                          "FRONTEND_URL=https://$(az staticwebapp show --name $SWA_NAME --resource-group $RG_NAME --query defaultHostname -o tsv)"
