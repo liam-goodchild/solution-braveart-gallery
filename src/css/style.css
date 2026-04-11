@@ -389,6 +389,34 @@ img {
   margin-top: 4rem;
 }
 
+.footer--floating {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-top: none;
+  margin-top: 0;
+  padding: 1rem;
+}
+
+.footer__sep {
+  margin: 0 0.4rem;
+  opacity: 0.4;
+}
+
+.footer__admin {
+  color: var(--text-secondary);
+  opacity: 0.4;
+  font-size: 0.8rem;
+  text-decoration: none;
+  transition: opacity 0.3s;
+}
+
+.footer__admin:hover {
+  opacity: 1;
+  color: var(--text-secondary);
+}
+
 /* ---- Responsive ---- */
 
 @media (max-width: 600px) {
