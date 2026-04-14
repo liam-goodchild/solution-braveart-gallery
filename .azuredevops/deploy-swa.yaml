@@ -1,88 +1,136 @@
-trigger:
+trigger: none
+
+pr:
   branches:
     include:
       - main
   paths:
-    include:
-      - frontend/*
-      - functions/*
+    exclude:
+      - '**/README.md'
+
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: liam-goodchild/pipeline-engineering-templates
+      endpoint: liam-goodchild
+      ref: refs/heads/main
 
 pool:
   vmImage: ubuntu-latest
 
+parameters:
+  - name: environment
+    displayName: Environment
+    type: string
+    default: dev
+    values: [dev, prd]
+
 variables:
-  - group: braveart-prd
+  - name: serviceConnectionName
+    value: sc-customer
+  - name: keyVaultName
+    value: kv-braveart-${{ parameters.environment }}-uks-01
 
 stages:
+  # Stage 1: Linting (PR only)
+  - stage: Linting
+    displayName: 'Linting & Validation'
+    condition: eq(variables['Build.Reason'], 'PullRequest')
+    jobs:
+      - job: SuperLinter
+        displayName: 'Super-Linter'
+        steps:
+          - template: validation/linting.yaml@templates
+            parameters:
+              prettierConfigFile: .azuredevops/linters/.prettierrc.json
+              checkovConfigFile: .azuredevops/linters/.checkov.yaml
+
+  # Stage 2: Build
   - stage: Build
-    displayName: Build
+    displayName: 'Build'
+    dependsOn: Linting
+    condition: |
+      and(
+        not(failed('Linting')),
+        ne(variables['Build.Reason'], 'PullRequest')
+      )
     jobs:
       - job: Build
-        displayName: Build API
+        displayName: 'Build API'
         steps:
           - task: NodeTool@0
-            displayName: Use Node.js 20
+            displayName: 'Use Node.js 20'
             inputs:
               versionSpec: 20.x
 
           - script: npm ci
-            displayName: Install API Dependencies
+            displayName: 'Install API Dependencies'
             workingDirectory: $(System.DefaultWorkingDirectory)/functions
 
           - publish: $(System.DefaultWorkingDirectory)/frontend
             artifact: frontend
-            displayName: Publish Frontend
+            displayName: 'Publish Frontend'
 
           - publish: $(System.DefaultWorkingDirectory)/functions
             artifact: functions
-            displayName: Publish Functions
+            displayName: 'Publish Functions'
 
+  # Stage 3: Deploy
   - stage: Deploy
-    displayName: Deploy to SWA
+    displayName: 'Deploy to SWA (${{ parameters.environment }})'
     dependsOn: Build
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    condition: succeeded()
     jobs:
       - deployment: Deploy
-        displayName: Deploy
-        environment: braveart-prd
+        displayName: 'Deploy'
+        environment: braveart-${{ parameters.environment }}
         strategy:
           runOnce:
             deploy:
               steps:
                 - download: current
                   artifact: frontend
-                  displayName: Download Frontend
+                  displayName: 'Download Frontend'
 
                 - download: current
                   artifact: functions
-                  displayName: Download Functions
+                  displayName: 'Download Functions'
+
+                - task: AzureKeyVault@2
+                  displayName: 'Fetch Secrets from Key Vault'
+                  inputs:
+                    azureSubscription: $(serviceConnectionName)
+                    KeyVaultName: $(keyVaultName)
+                    SecretsFilter: 'swa-deployment-token,storage-connection-string,storage-account-name,storage-account-key,stripe-secret-key'
+                    RunAsPreJob: false
 
                 - task: AzureStaticWebApp@0
-                  displayName: Deploy Static Web App
+                  displayName: 'Deploy Static Web App'
                   inputs:
                     app_location: $(Pipeline.Workspace)/frontend
                     api_location: $(Pipeline.Workspace)/functions
                     skip_app_build: true
                     skip_api_build: true
                   env:
-                    azure_static_web_apps_api_token: $(swaDeploymentToken)
+                    azure_static_web_apps_api_token: $(swa-deployment-token)
 
                 - task: AzureCLI@2
-                  displayName: Sync App Settings to SWA
+                  displayName: 'Sync App Settings to SWA'
                   inputs:
-                    azureSubscription: $(serviceConnection)
+                    azureSubscription: $(serviceConnectionName)
                     scriptType: bash
                     scriptLocation: inlineScript
                     inlineScript: |
-                      SWA_NAME="stapp-braveart-prd-uks-01"
-                      RG_NAME="rg-braveart-prd-uks-01"
+                      SWA_NAME="stapp-braveart-${{ parameters.environment }}-uks-01"
+                      RG_NAME="rg-braveart-${{ parameters.environment }}-uks-01"
 
                       az staticwebapp appsettings set \
                         --name $SWA_NAME \
                         --resource-group $RG_NAME \
                         --setting-names \
-                          "STORAGE_CONNECTION_STRING=$(STORAGE_CONNECTION_STRING)" \
-                          "STORAGE_ACCOUNT_NAME=$(STORAGE_ACCOUNT_NAME)" \
-                          "STORAGE_ACCOUNT_KEY=$(STORAGE_ACCOUNT_KEY)" \
-                          "STRIPE_SECRET_KEY=$(STRIPE_SECRET_KEY)" \
+                          "STORAGE_CONNECTION_STRING=$(storage-connection-string)" \
+                          "STORAGE_ACCOUNT_NAME=$(storage-account-name)" \
+                          "STORAGE_ACCOUNT_KEY=$(storage-account-key)" \
+                          "STRIPE_SECRET_KEY=$(stripe-secret-key)" \
                           "FRONTEND_URL=https://$(az staticwebapp show --name $SWA_NAME --resource-group $RG_NAME --query defaultHostname -o tsv)"

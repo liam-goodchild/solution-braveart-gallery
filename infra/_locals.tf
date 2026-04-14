@@ -1,4 +1,8 @@
 locals {
-  name_suffix = "${var.project}-${var.environment}-${var.location_short}-${var.instance}"
-  name_flat   = "${var.project}${var.environment}${var.location_short}${var.instance}"
+  resource_suffix      = "${var.workload}-${var.environment}-${var.location_short}-${var.instance}"
+  resource_suffix_flat = "${var.workload}${var.environment}${var.location_short}${var.instance}"
+
+  tags = {
+    managed-by = "terraform"
+  }
 }

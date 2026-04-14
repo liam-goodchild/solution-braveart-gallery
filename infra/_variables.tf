@@ -4,8 +4,8 @@ variable "subscription_id" {
   default     = "1c26c084-763b-4d2d-86aa-af36b444b6bb"
 }
 
-variable "project" {
-  description = "Short project name used in resource naming"
+variable "workload" {
+  description = "Workload name used in resource naming"
   type        = string
   default     = "braveart"
 }
@@ -34,11 +34,8 @@ variable "instance" {
   default     = "01"
 }
 
-variable "tags" {
-  description = "Tags applied to all resources"
-  type        = map(string)
-  default = {
-    project     = "buffy-braveart-gallery"
-    environment = "production"
-  }
+variable "stripe_secret_key" {
+  description = "Stripe secret API key"
+  type        = string
+  sensitive   = true
 }

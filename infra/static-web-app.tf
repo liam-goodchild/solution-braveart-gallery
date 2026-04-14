@@ -1,8 +1,14 @@
+resource "azurerm_resource_group" "this" {
+  name     = "rg-${local.resource_suffix}"
+  location = var.location
+  tags     = local.tags
+}
+
 resource "azurerm_static_web_app" "this" {
-  name                = "stapp-${local.name_suffix}"
+  name                = "stapp-${local.resource_suffix}"
   resource_group_name = azurerm_resource_group.this.name
   location            = "westeurope"
   sku_tier            = "Free"
   sku_size            = "Free"
-  tags                = var.tags
+  tags                = local.tags
 }
