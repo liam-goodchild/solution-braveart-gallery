@@ -38,4 +38,5 @@ variable "stripe_secret_key" {
   description = "Stripe secret API key"
   type        = string
   sensitive   = true
+  default     = ""
 }
