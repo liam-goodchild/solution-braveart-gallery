@@ -59,4 +59,4 @@ stages:
               envTfvars: $(tfvars)
               globalTfvars: $(globalTfvars)
               whitelistAgentIp: false
-              ensureBackendContainer: true
+              ensureBackendContainer: false
