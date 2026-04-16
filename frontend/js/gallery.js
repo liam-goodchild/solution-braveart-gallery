@@ -42,7 +42,7 @@
     buyBtn.textContent = "Purchase";
     buyBtn.addEventListener("click", function () {
       buyBtn.disabled = true;
-      buyBtn.textContent = "Redirecting\u2026";
+      buyBtn.textContent = "Opening\u2026";
 
       fetch("/api/checkout", {
         method: "POST",
@@ -61,7 +61,9 @@
         })
         .then(function (data) {
           if (data.url) {
-            window.location.href = data.url;
+            window.open(data.url, "_blank");
+            buyBtn.disabled = false;
+            buyBtn.textContent = "Purchase";
           } else {
             throw new Error(data.error || "Checkout failed");
           }

@@ -50,7 +50,7 @@ stages:
             inputs:
               azureSubscription: $(serviceConnectionName)
               KeyVaultName: $(keyVaultName)
-              SecretsFilter: 'swa-deployment-token,storage-connection-string,storage-account-name,storage-account-key,stripe-secret-key'
+              SecretsFilter: 'swa-deployment-token,stripe-secret-key'
               RunAsPreJob: false
 
           - task: AzureStaticWebApp@0
@@ -75,8 +75,5 @@ stages:
                   --name $SWA_NAME \
                   --resource-group $RG_NAME \
                   --setting-names \
-                    "STORAGE_CONNECTION_STRING=$(storage-connection-string)" \
-                    "STORAGE_ACCOUNT_NAME=$(storage-account-name)" \
-                    "STORAGE_ACCOUNT_KEY=$(storage-account-key)" \
                     "STRIPE_SECRET_KEY=$(stripe-secret-key)" \
                     "FRONTEND_URL=https://$(az staticwebapp show --name $SWA_NAME --resource-group $RG_NAME --query defaultHostname -o tsv)"
