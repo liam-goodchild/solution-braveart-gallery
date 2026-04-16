@@ -1,8 +1,11 @@
-// Gallery page — fetch artworks and render editorial layout
+// Gallery page — Salon-hang masonry layout with gilded frames
 
 (function () {
   var galleryEl = document.getElementById("gallery");
   var loadingEl = document.getElementById("loading");
+
+  // Subtle random tilts for salon-wall feel (-1.2 to 1.2 degrees)
+  var tilts = [-1.2, 0.6, -0.4, 1.0, -0.8, 0.3, -1.0, 0.8, -0.2, 0.5, -0.6, 1.1];
 
   function formatPrice(pence) {
     return "\u00A3" + (pence / 100).toFixed(2);
@@ -10,9 +13,11 @@
 
   function createCard(artwork, index) {
     var article = document.createElement("article");
-    article.className = "artwork" + (index === 0 ? " artwork--featured" : "");
-    article.style.transitionDelay = (index * 0.12) + "s";
+    article.className = "artwork";
+    article.style.setProperty("--tilt", tilts[index % tilts.length] + "deg");
+    article.style.transitionDelay = (index * 0.1) + "s";
 
+    // Frame
     var frame = document.createElement("div");
     frame.className = "artwork__frame";
 
@@ -21,30 +26,25 @@
       img.className = "artwork__image";
       img.src = artwork.imageUrl;
       img.alt = artwork.name;
-      img.loading = index === 0 ? "eager" : "lazy";
+      img.loading = index < 3 ? "eager" : "lazy";
       frame.appendChild(img);
     }
 
-    var overlay = document.createElement("div");
-    overlay.className = "artwork__overlay";
-    frame.appendChild(overlay);
     article.appendChild(frame);
 
-    var details = document.createElement("div");
-    details.className = "artwork__details";
+    // Plaque (museum-style label)
+    var plaque = document.createElement("div");
+    plaque.className = "artwork__plaque";
 
     var title = document.createElement("h2");
     title.className = "artwork__title";
     title.textContent = artwork.name;
-    details.appendChild(title);
-
-    var meta = document.createElement("div");
-    meta.className = "artwork__meta";
+    plaque.appendChild(title);
 
     var price = document.createElement("span");
     price.className = "artwork__price";
     price.textContent = formatPrice(artwork.price);
-    meta.appendChild(price);
+    plaque.appendChild(price);
 
     var buyBtn = document.createElement("button");
     buyBtn.className = "artwork__buy";
@@ -84,9 +84,8 @@
         });
     });
 
-    meta.appendChild(buyBtn);
-    details.appendChild(meta);
-    article.appendChild(details);
+    plaque.appendChild(buyBtn);
+    article.appendChild(plaque);
 
     return article;
   }
@@ -120,8 +119,8 @@
 
       if (artworks.length === 0) {
         var empty = document.createElement("p");
-        empty.className = "editorial-gallery__empty";
-        empty.textContent = "No artwork available yet. Check back soon.";
+        empty.className = "salon-gallery__empty";
+        empty.textContent = "The collection is being curated. Please return soon.";
         galleryEl.appendChild(empty);
         return;
       }
@@ -133,6 +132,6 @@
       setupScrollReveal();
     })
     .catch(function () {
-      loadingEl.textContent = "Unable to load artwork. Please try again later.";
+      loadingEl.textContent = "Unable to load the collection. Please try again later.";
     });
 })();
