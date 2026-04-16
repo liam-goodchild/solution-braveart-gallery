@@ -4,9 +4,6 @@
   var galleryEl = document.getElementById("gallery");
   var loadingEl = document.getElementById("loading");
 
-  // Subtle random tilts for salon-wall feel (-1.2 to 1.2 degrees)
-  var tilts = [-1.2, 0.6, -0.4, 1.0, -0.8, 0.3, -1.0, 0.8, -0.2, 0.5, -0.6, 1.1];
-
   function formatPrice(pence) {
     return "\u00A3" + (pence / 100).toFixed(2);
   }
@@ -14,7 +11,6 @@
   function createCard(artwork, index) {
     var article = document.createElement("article");
     article.className = "artwork";
-    article.style.setProperty("--tilt", tilts[index % tilts.length] + "deg");
     article.style.transitionDelay = (index * 0.1) + "s";
 
     // Frame
@@ -48,7 +44,7 @@
 
     var buyBtn = document.createElement("button");
     buyBtn.className = "artwork__buy";
-    buyBtn.textContent = "Acquire";
+    buyBtn.textContent = "Purchase";
     buyBtn.addEventListener("click", function () {
       buyBtn.disabled = true;
       buyBtn.textContent = "Opening\u2026";
@@ -70,9 +66,9 @@
         })
         .then(function (data) {
           if (data.url) {
-            window.open(data.url, "_blank");
+            window.location.href = data.url;
             buyBtn.disabled = false;
-            buyBtn.textContent = "Acquire";
+            buyBtn.textContent = "Purchase";
           } else {
             throw new Error(data.error || "Checkout failed");
           }
@@ -80,7 +76,7 @@
         .catch(function (err) {
           alert("Could not start checkout: " + err.message);
           buyBtn.disabled = false;
-          buyBtn.textContent = "Acquire";
+          buyBtn.textContent = "Purchase";
         });
     });
 

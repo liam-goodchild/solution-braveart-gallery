@@ -34,9 +34,14 @@
   box-sizing: border-box;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 html {
   font-size: 16px;
-  scroll-behavior: smooth;
 }
 
 body {
@@ -518,7 +523,7 @@ img {
 
 .artwork--visible {
   opacity: 1;
-  transform: translateY(0) rotate(var(--tilt, 0deg));
+  transform: translateY(0);
 }
 
 .artwork__frame {
@@ -557,10 +562,6 @@ img {
   transition: opacity 0.5s ease;
 }
 
-.artwork:hover {
-  transform: rotate(0deg) !important;
-}
-
 .artwork:hover .artwork__frame {
   box-shadow:
     inset 0 0 0 1px rgba(201, 164, 74, 0.25),
@@ -575,11 +576,6 @@ img {
   width: 100%;
   height: auto;
   display: block;
-  transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.artwork:hover .artwork__image {
-  transform: scale(1.03);
 }
 
 /* ---- Artwork Plaque ---- */
@@ -928,11 +924,4 @@ img {
     padding: 1rem 1.5rem;
   }
 
-  .artwork {
-    transform: none !important;
-  }
-
-  .artwork--visible {
-    transform: none !important;
-  }
 }
