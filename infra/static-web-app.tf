@@ -1,9 +1,3 @@
-resource "azurerm_resource_group" "this" {
-  name     = "rg-${local.resource_suffix}"
-  location = var.location
-  tags     = local.tags
-}
-
 resource "azurerm_static_web_app" "this" {
   name                = "stapp-${local.resource_suffix}"
   resource_group_name = azurerm_resource_group.this.name
