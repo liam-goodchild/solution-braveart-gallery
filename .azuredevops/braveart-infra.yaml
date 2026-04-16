@@ -39,6 +39,7 @@ variables:
     value: rg-tfs-platform-${{ lower(parameters.environment) }}-uks-01
   - name: backendStorageAccountName
     value: sttfsplatform${{ lower(parameters.environment) }}uks01
+  - group: braveart-secrets
 
 stages:
   - stage: Terraform

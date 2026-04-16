@@ -24,8 +24,7 @@ parameters:
 variables:
   - name: serviceConnectionName
     value: sc-customer
-  - name: keyVaultName
-    value: kv-braveart-${{ lower(parameters.environment) }}-uks-01
+  - group: braveart-secrets
 
 stages:
   - stage: Deploy
@@ -45,24 +44,8 @@ stages:
             displayName: 'Install API Dependencies'
             workingDirectory: $(System.DefaultWorkingDirectory)/functions
 
-          - task: AzureKeyVault@2
-            displayName: 'Fetch Secrets from Key Vault'
-            inputs:
-              azureSubscription: $(serviceConnectionName)
-              KeyVaultName: $(keyVaultName)
-              SecretsFilter: 'swa-deployment-token,stripe-secret-key'
-              RunAsPreJob: false
-
-          - task: AzureStaticWebApp@0
-            displayName: 'Deploy Static Web App'
-            inputs:
-              app_location: frontend
-              api_location: functions
-              output_location: ''
-              azure_static_web_apps_api_token: $(swa-deployment-token)
-
           - task: AzureCLI@2
-            displayName: 'Sync App Settings to SWA'
+            displayName: 'Fetch SWA Deployment Token'
             inputs:
               azureSubscription: $(serviceConnectionName)
               scriptType: bash
@@ -71,9 +54,17 @@ stages:
                 SWA_NAME="stapp-braveart-${{ lower(parameters.environment) }}-uks-01"
                 RG_NAME="rg-braveart-${{ lower(parameters.environment) }}-uks-01"
 
-                az staticwebapp appsettings set \
+                TOKEN=$(az staticwebapp secrets list \
                   --name $SWA_NAME \
                   --resource-group $RG_NAME \
-                  --setting-names \
-                    "STRIPE_SECRET_KEY=$(stripe-secret-key)" \
-                    "FRONTEND_URL=https://$(az staticwebapp show --name $SWA_NAME --resource-group $RG_NAME --query defaultHostname -o tsv)"
+                  --query "properties.apiKey" -o tsv)
+
+                echo "##vso[task.setvariable variable=swaDeploymentToken;issecret=true]$TOKEN"
+
+          - task: AzureStaticWebApp@0
+            displayName: 'Deploy Static Web App'
+            inputs:
+              app_location: frontend
+              api_location: functions
+              output_location: ''
+              azure_static_web_apps_api_token: $(swaDeploymentToken)
