@@ -8,7 +8,7 @@ resource "azurerm_static_web_app" "this" {
 
   app_settings = {
     STRIPE_SECRET_KEY = var.stripe_secret_key
-    FRONTEND_URL      = var.dns_delegated ? "https://${var.domain_name}" : "https://${azurerm_static_web_app.this.default_host_name}"
+    FRONTEND_URL      = "https://${var.domain_name}"
   }
 }
 
