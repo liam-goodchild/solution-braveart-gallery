@@ -12,12 +12,14 @@
     var card = document.createElement("div");
     card.className = "card";
 
-    var img = document.createElement("img");
-    img.className = "card__image";
-    img.src = artwork.imageUrl;
-    img.alt = artwork.name;
-    img.loading = "lazy";
-    card.appendChild(img);
+    if (artwork.imageUrl) {
+      var img = document.createElement("img");
+      img.className = "card__image";
+      img.src = artwork.imageUrl;
+      img.alt = artwork.name;
+      img.loading = "lazy";
+      card.appendChild(img);
+    }
 
     var body = document.createElement("div");
     body.className = "card__body";
@@ -45,7 +47,7 @@
       fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ artworkId: artwork.rowKey })
+        body: JSON.stringify({ priceId: artwork.priceId })
       })
         .then(function (res) {
           if (!res.ok) {
