@@ -47,6 +47,9 @@ stages:
     jobs:
       - job: TerraformAction
         displayName: 'Terraform ${{ parameters.terraformAction }}'
+        variables:
+          - name: TF_VAR_stripe_secret_key
+            value: $(STRIPE-SECRET-KEY)
         steps:
           - checkout: self
           - template: terraform/action.yaml@templates
