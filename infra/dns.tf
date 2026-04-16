@@ -25,6 +25,10 @@ resource "azurerm_dns_txt_record" "apex_validation" {
   record {
     value = azurerm_static_web_app_custom_domain.apex[0].validation_token
   }
+
+  lifecycle {
+    ignore_changes = [record]
+  }
 }
 
 resource "azurerm_dns_cname_record" "www" {
