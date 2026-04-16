@@ -84,8 +84,8 @@ stages:
           - task: AzureStaticWebApp@0
             displayName: 'Deploy Static Web App'
             inputs:
-              app_location: $(System.DefaultWorkingDirectory)/frontend
-              api_location: $(System.DefaultWorkingDirectory)/functions
+              app_location: frontend
+              api_location: functions
               skip_app_build: true
               skip_api_build: true
             env:
