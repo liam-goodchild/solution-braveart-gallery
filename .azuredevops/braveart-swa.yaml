@@ -65,13 +65,13 @@ stages:
             displayName: 'Download Frontend'
             inputs:
               artifact: frontend
-              targetPath: $(Pipeline.Workspace)/frontend
+              targetPath: $(System.DefaultWorkingDirectory)/frontend
 
           - task: DownloadPipelineArtifact@2
             displayName: 'Download Functions'
             inputs:
               artifact: functions
-              targetPath: $(Pipeline.Workspace)/functions
+              targetPath: $(System.DefaultWorkingDirectory)/functions
 
           - task: AzureKeyVault@2
             displayName: 'Fetch Secrets from Key Vault'
@@ -84,8 +84,8 @@ stages:
           - task: AzureStaticWebApp@0
             displayName: 'Deploy Static Web App'
             inputs:
-              app_location: $(Pipeline.Workspace)/frontend
-              api_location: $(Pipeline.Workspace)/functions
+              app_location: $(System.DefaultWorkingDirectory)/frontend
+              api_location: $(System.DefaultWorkingDirectory)/functions
               skip_app_build: true
               skip_api_build: true
             env:
