@@ -25,7 +25,7 @@ variables:
   - name: serviceConnectionName
     value: sc-customer
   - name: keyVaultName
-    value: kv-braveart-${{ parameters.environment }}-uks-01
+    value: kv-braveart-${{ lower(parameters.environment) }}-uks-01
 
 stages:
   # Stage 1: Build
@@ -60,7 +60,6 @@ stages:
     jobs:
       - deployment: Deploy
         displayName: 'Deploy'
-        environment: braveart-${{ parameters.environment }}
         strategy:
           runOnce:
             deploy:
@@ -98,8 +97,8 @@ stages:
                     scriptType: bash
                     scriptLocation: inlineScript
                     inlineScript: |
-                      SWA_NAME="stapp-braveart-${{ parameters.environment }}-uks-01"
-                      RG_NAME="rg-braveart-${{ parameters.environment }}-uks-01"
+                      SWA_NAME="stapp-braveart-${{ lower(parameters.environment) }}-uks-01"
+                      RG_NAME="rg-braveart-${{ lower(parameters.environment) }}-uks-01"
 
                       az staticwebapp appsettings set \
                         --name $SWA_NAME \
