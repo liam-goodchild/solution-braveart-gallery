@@ -1,4 +1,4 @@
-// Gallery page — fetch artworks and render cards with Stripe checkout
+// Gallery page — fetch artworks and render editorial layout
 
 (function () {
   var galleryEl = document.getElementById("gallery");
@@ -8,38 +8,47 @@
     return "\u00A3" + (pence / 100).toFixed(2);
   }
 
-  function createCard(artwork) {
-    var card = document.createElement("div");
-    card.className = "card";
+  function createCard(artwork, index) {
+    var article = document.createElement("article");
+    article.className = "artwork" + (index === 0 ? " artwork--featured" : "");
+    article.style.transitionDelay = (index * 0.12) + "s";
+
+    var frame = document.createElement("div");
+    frame.className = "artwork__frame";
 
     if (artwork.imageUrl) {
       var img = document.createElement("img");
-      img.className = "card__image";
+      img.className = "artwork__image";
       img.src = artwork.imageUrl;
       img.alt = artwork.name;
-      img.loading = "lazy";
-      card.appendChild(img);
+      img.loading = index === 0 ? "eager" : "lazy";
+      frame.appendChild(img);
     }
 
-    var body = document.createElement("div");
-    body.className = "card__body";
+    var overlay = document.createElement("div");
+    overlay.className = "artwork__overlay";
+    frame.appendChild(overlay);
+    article.appendChild(frame);
 
-    var name = document.createElement("h2");
-    name.className = "card__name";
-    name.textContent = artwork.name;
-    body.appendChild(name);
+    var details = document.createElement("div");
+    details.className = "artwork__details";
 
-    var price = document.createElement("p");
-    price.className = "card__price";
+    var title = document.createElement("h2");
+    title.className = "artwork__title";
+    title.textContent = artwork.name;
+    details.appendChild(title);
+
+    var meta = document.createElement("div");
+    meta.className = "artwork__meta";
+
+    var price = document.createElement("span");
+    price.className = "artwork__price";
     price.textContent = formatPrice(artwork.price);
-    body.appendChild(price);
-
-    var actions = document.createElement("div");
-    actions.className = "card__actions";
+    meta.appendChild(price);
 
     var buyBtn = document.createElement("button");
-    buyBtn.className = "btn btn--filled btn--small";
-    buyBtn.textContent = "Purchase";
+    buyBtn.className = "artwork__buy";
+    buyBtn.textContent = "Acquire";
     buyBtn.addEventListener("click", function () {
       buyBtn.disabled = true;
       buyBtn.textContent = "Opening\u2026";
@@ -63,7 +72,7 @@
           if (data.url) {
             window.open(data.url, "_blank");
             buyBtn.disabled = false;
-            buyBtn.textContent = "Purchase";
+            buyBtn.textContent = "Acquire";
           } else {
             throw new Error(data.error || "Checkout failed");
           }
@@ -71,15 +80,37 @@
         .catch(function (err) {
           alert("Could not start checkout: " + err.message);
           buyBtn.disabled = false;
-          buyBtn.textContent = "Purchase";
+          buyBtn.textContent = "Acquire";
         });
     });
 
-    actions.appendChild(buyBtn);
-    body.appendChild(actions);
-    card.appendChild(body);
+    meta.appendChild(buyBtn);
+    details.appendChild(meta);
+    article.appendChild(details);
 
-    return card;
+    return article;
+  }
+
+  function setupScrollReveal() {
+    if (!("IntersectionObserver" in window)) {
+      document.querySelectorAll(".artwork").forEach(function (el) {
+        el.classList.add("artwork--visible");
+      });
+      return;
+    }
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("artwork--visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.05, rootMargin: "0px 0px -40px 0px" });
+
+    document.querySelectorAll(".artwork").forEach(function (el) {
+      observer.observe(el);
+    });
   }
 
   fetch("/api/artworks")
@@ -89,15 +120,17 @@
 
       if (artworks.length === 0) {
         var empty = document.createElement("p");
-        empty.className = "gallery__empty";
+        empty.className = "editorial-gallery__empty";
         empty.textContent = "No artwork available yet. Check back soon.";
         galleryEl.appendChild(empty);
         return;
       }
 
-      artworks.forEach(function (artwork) {
-        galleryEl.appendChild(createCard(artwork));
+      artworks.forEach(function (artwork, i) {
+        galleryEl.appendChild(createCard(artwork, i));
       });
+
+      setupScrollReveal();
     })
     .catch(function () {
       loadingEl.textContent = "Unable to load artwork. Please try again later.";
