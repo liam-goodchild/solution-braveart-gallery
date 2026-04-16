@@ -23,7 +23,7 @@ resource "azurerm_dns_txt_record" "apex_validation" {
   tags                = local.tags
 
   record {
-    value = azurerm_static_web_app_custom_domain.apex[0].validation_token
+    value = coalesce(azurerm_static_web_app_custom_domain.apex[0].validation_token, "validated")
   }
 
   lifecycle {
