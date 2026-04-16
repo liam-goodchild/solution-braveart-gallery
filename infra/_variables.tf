@@ -34,6 +34,18 @@ variable "instance" {
   default     = "01"
 }
 
+variable "domain_name" {
+  description = "Custom domain name for the static web app"
+  type        = string
+  default     = "buffybraveart.com"
+}
+
+variable "dns_delegated" {
+  description = "Set to true after GoDaddy nameservers point to Azure DNS"
+  type        = bool
+  default     = false
+}
+
 variable "stripe_secret_key" {
   description = "Stripe secret API key"
   type        = string
