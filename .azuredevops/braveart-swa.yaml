@@ -35,10 +35,10 @@ stages:
       - job: Build
         displayName: 'Build API'
         steps:
-          - task: NodeTool@0
+          - task: UseNode@1
             displayName: 'Use Node.js 20'
             inputs:
-              versionSpec: 20.x
+              version: 20.x
 
           - script: npm ci
             displayName: 'Install API Dependencies'
@@ -88,6 +88,8 @@ stages:
               api_location: functions
               skip_app_build: true
               skip_api_build: true
+              api_language: node
+              api_runtime_version: '20'
             env:
               azure_static_web_apps_api_token: $(swa-deployment-token)
 
