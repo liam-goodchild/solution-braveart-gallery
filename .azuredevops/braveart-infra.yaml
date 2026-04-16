@@ -49,7 +49,7 @@ stages:
         displayName: 'Terraform ${{ parameters.terraformAction }}'
         variables:
           - name: TF_VAR_stripe_secret_key
-            value: $(STRIPE-SECRET-KEY)
+            value: $(TF_VAR_stripe_secret_key)
         steps:
           - checkout: self
           - template: terraform/action.yaml@templates
