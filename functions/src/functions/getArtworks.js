@@ -1,34 +1,28 @@
 const { app } = require("@azure/functions");
-const { TableClient } = require("@azure/data-tables");
+const Stripe = require("stripe");
 
 app.http("getArtworks", {
   methods: ["GET"],
   authLevel: "anonymous",
   route: "artworks",
   handler: async (request, context) => {
-    const client = TableClient.fromConnectionString(
-      process.env.STORAGE_CONNECTION_STRING,
-      "artworks"
-    );
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-    // Ensure the table exists
-    await client.createTable().catch(() => {});
+    const products = await stripe.products.list({
+      active: true,
+      expand: ["data.default_price"],
+    });
 
-    const artworks = [];
-    const entities = client.listEntities();
-
-    for await (const entity of entities) {
-      artworks.push({
-        rowKey: entity.rowKey,
-        name: entity.name,
-        price: entity.price,
-        imageUrl: entity.imageUrl,
-        createdAt: entity.createdAt,
-      });
-    }
-
-    // Sort newest first
-    artworks.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
+    const artworks = products.data
+      .filter((p) => p.default_price && p.default_price.unit_amount)
+      .map((p) => ({
+        id: p.id,
+        priceId: p.default_price.id,
+        name: p.name,
+        description: p.description,
+        price: p.default_price.unit_amount,
+        imageUrl: p.images.length > 0 ? p.images[0] : null,
+      }));
 
     return {
       jsonBody: artworks,

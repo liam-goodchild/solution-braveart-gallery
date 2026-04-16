@@ -1,5 +1,4 @@
 const { app } = require("@azure/functions");
-const { TableClient } = require("@azure/data-tables");
 const Stripe = require("stripe");
 
 app.http("checkout", {
@@ -9,41 +8,13 @@ app.http("checkout", {
   handler: async (request, context) => {
     const body = await request.json();
 
-    if (!body.artworkId) {
+    if (!body.priceId) {
       return {
         status: 400,
-        jsonBody: { error: "artworkId is required" },
+        jsonBody: { error: "priceId is required" },
       };
     }
 
-
-    // Look up the artwork in Table Storage
-    const tableClient = TableClient.fromConnectionString(
-      process.env.STORAGE_CONNECTION_STRING,
-      "artworks"
-    );
-
-    let artwork;
-    try {
-      artwork = await tableClient.getEntity("artwork", body.artworkId);
-    } catch (err) {
-      if (err.statusCode === 404) {
-        return {
-          status: 404,
-          jsonBody: { error: "Artwork not found" },
-        };
-      }
-      throw err;
-    }
-
-    if (!artwork.price || artwork.price < 30) {
-      return {
-        status: 400,
-        jsonBody: { error: "Artwork price must be at least £0.30" },
-      };
-    }
-
-    // Create a Stripe Checkout session
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
     const frontendUrl = process.env.FRONTEND_URL;
 
@@ -51,14 +22,7 @@ app.http("checkout", {
       mode: "payment",
       line_items: [
         {
-          price_data: {
-            currency: "gbp",
-            product_data: {
-              name: artwork.name,
-              images: [artwork.imageUrl],
-            },
-            unit_amount: artwork.price,
-          },
+          price: body.priceId,
           quantity: 1,
         },
       ],
