@@ -47,9 +47,6 @@ stages:
     jobs:
       - job: TerraformAction
         displayName: 'Terraform ${{ parameters.terraformAction }}'
-        variables:
-          - name: TF_VAR_stripe_secret_key
-            value: $(TF_VAR_stripe_secret_key)
         steps:
           - checkout: self
           - template: terraform/action.yaml@templates
@@ -64,3 +61,5 @@ stages:
               globalTfvars: $(globalTfvars)
               whitelistAgentIp: false
               ensureBackendContainer: false
+              environmentVariables:
+                TF_VAR_stripe_secret_key: $(stripe-secret-key)
