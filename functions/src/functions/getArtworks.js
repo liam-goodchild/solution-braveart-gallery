@@ -1,11 +1,24 @@
 const { app } = require("@azure/functions");
 const Stripe = require("stripe");
 
+let cachedArtworks = null;
+let cacheExpiry = 0;
+const CACHE_TTL_MS = 5 * 60 * 1000;
+
 app.http("getArtworks", {
   methods: ["GET"],
   authLevel: "anonymous",
   route: "artworks",
   handler: async (request, context) => {
+    const now = Date.now();
+
+    if (cachedArtworks && now < cacheExpiry) {
+      return {
+        jsonBody: cachedArtworks,
+        headers: { "Cache-Control": "public, max-age=300" },
+      };
+    }
+
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
     const products = await stripe.products.list({
@@ -24,8 +37,12 @@ app.http("getArtworks", {
         imageUrl: p.images.length > 0 ? p.images[0] : null,
       }));
 
+    cachedArtworks = artworks;
+    cacheExpiry = now + CACHE_TTL_MS;
+
     return {
       jsonBody: artworks,
+      headers: { "Cache-Control": "public, max-age=300" },
     };
   },
 });
