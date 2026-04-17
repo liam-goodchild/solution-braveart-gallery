@@ -1,0 +1,50 @@
+name: 'Ensure Backend Container Exists'
+description: 'Create the Terraform state backend container if it does not exist'
+
+inputs:
+  storage-account-name:
+    description: 'Azure Storage Account name'
+    required: true
+  container-name:
+    description: 'Backend container name'
+    required: true
+  subscription-id:
+    description: 'Azure subscription ID for the backend storage account'
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Ensure Backend Container Exists
+      shell: bash
+      run: |
+        container_name="${{ inputs.container-name }}"
+        storage_account="${{ inputs.storage-account-name }}"
+        subscription_id="${{ inputs.subscription-id }}"
+
+        if [[ -n "$subscription_id" ]]; then
+          echo "::notice::Switching to backend subscription: $subscription_id"
+          az account set --subscription "$subscription_id"
+        fi
+
+        echo "Checking if container '$container_name' exists in storage account '$storage_account'..."
+
+        container_exists=$(az storage container exists \
+          --name "$container_name" \
+          --account-name "$storage_account" \
+          --auth-mode login \
+          --query exists \
+          --output tsv)
+
+        if [[ "$container_exists" == "true" ]]; then
+          echo "::notice::Container '$container_name' already exists."
+        else
+          echo "Container '$container_name' does not exist. Creating..."
+          az storage container create \
+            --name "$container_name" \
+            --account-name "$storage_account" \
+            --auth-mode login \
+            --output none
+          echo "::notice::Container '$container_name' created successfully."
+        fi
