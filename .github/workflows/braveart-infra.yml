@@ -7,8 +7,8 @@ on:
         description: 'Target environment'
         type: choice
         required: true
-        default: dev
-        options: [dev, prd]
+        default: prd
+        options: [prd]
       terraform-action:
         description: 'Terraform action to perform'
         type: choice
@@ -28,7 +28,7 @@ jobs:
       terraform-action: ${{ inputs.terraform-action }}
       backend-resource-group-name: rg-tfs-platform-${{ inputs.environment }}-uks-01
       backend-storage-account-name: sttfsplatform${{ inputs.environment }}uks01
-      backend-container-name: PLACEHOLDER
+      backend-container-name: ${{ github.event.repository.name }}
       backend-key: terraform.tfstate
       backend-subscription-id: cefc8742-e1dd-4b24-90a9-07e3d3c80d88
       env-tfvars: infra/vars/${{ inputs.environment }}.tfvars
