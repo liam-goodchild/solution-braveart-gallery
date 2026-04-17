@@ -1,0 +1,927 @@
+/* ============================================
+   Buffy Braveart Gallery — Salon Maximalist
+   Rich, textured, ornamental art collector aesthetic
+   ============================================ */
+
+/* ---- Google Fonts loaded in HTML ---- */
+
+:root {
+  --bg-deep:       #1a0a0f;
+  --bg-burgundy:   #2a1520;
+  --bg-card:       #231018;
+  --bg-frame:      #1e0c14;
+  --gold:          #c9a44a;
+  --gold-light:    #dfc06e;
+  --gold-dark:     #a07c2e;
+  --gold-muted:    rgba(201, 164, 74, 0.15);
+  --ivory:         #f0ead6;
+  --ivory-dim:     #c8c0aa;
+  --rose:          #8c5a6e;
+  --rose-light:    #a87289;
+  --rose-deep:     #5c2a3e;
+  --danger:        #c44;
+  --danger-hover:  #d66;
+  --border-gold:   rgba(201, 164, 74, 0.3);
+  --shadow-warm:   rgba(10, 4, 6, 0.6);
+  --shadow-gold:   rgba(201, 164, 74, 0.08);
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: 'EB Garamond', Georgia, serif;
+  background: var(--bg-deep);
+  color: var(--ivory);
+  line-height: 1.7;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+a {
+  color: var(--gold);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+a:hover {
+  color: var(--gold-light);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+::selection {
+  background: var(--rose);
+  color: var(--ivory);
+}
+
+/* ---- Canvas Texture Background ---- */
+
+.canvas-texture {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.04;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+}
+
+/* ---- Ornamental Viewport Frame ---- */
+
+.viewport-frame {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+.viewport-frame::before {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border: 1px solid var(--border-gold);
+  opacity: 0.5;
+}
+
+.viewport-frame::after {
+  content: '';
+  position: absolute;
+  inset: 16px;
+  border: 1px solid var(--border-gold);
+  opacity: 0.25;
+}
+
+/* ---- Ornamental Divider ---- */
+
+.ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  color: var(--gold);
+  opacity: 0.5;
+  font-size: 1.2rem;
+}
+
+.ornament::before,
+.ornament::after {
+  content: '';
+  flex: 1;
+  max-width: 80px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.ornament--wide::before,
+.ornament--wide::after {
+  max-width: 160px;
+}
+
+/* ---- Buttons ---- */
+
+.btn {
+  display: inline-block;
+  padding: 0.8rem 2.2rem;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-variant: small-caps;
+  font-size: 1rem;
+  letter-spacing: 0.15em;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  position: relative;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1px solid var(--border-gold);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.btn:hover {
+  background: var(--gold);
+  color: var(--bg-deep);
+  box-shadow: 0 0 20px var(--shadow-gold), 0 0 40px rgba(201, 164, 74, 0.05);
+}
+
+.btn:hover::before {
+  opacity: 1;
+  border-color: var(--bg-deep);
+}
+
+.btn--filled {
+  background: var(--gold);
+  color: var(--bg-deep);
+}
+
+.btn--filled::before {
+  border-color: rgba(26, 10, 15, 0.3);
+  opacity: 1;
+}
+
+.btn--filled:hover {
+  background: var(--gold-light);
+  box-shadow: 0 4px 24px rgba(201, 164, 74, 0.3);
+}
+
+.btn--danger {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.btn--danger:hover {
+  background: var(--danger);
+  color: var(--ivory);
+}
+
+.btn--small {
+  padding: 0.45rem 1.2rem;
+  font-size: 0.85rem;
+}
+
+/* ============================================
+   Homepage — Hero
+   ============================================ */
+
+.hero {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(140, 90, 110, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(201, 164, 74, 0.08) 0%, transparent 50%),
+    linear-gradient(180deg, #1a0a0f 0%, #120710 50%, #1a0a0f 100%);
+}
+
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(26, 10, 15, 0.65);
+  z-index: 1;
+}
+
+/* Decorative corner flourishes */
+.hero__corner {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  z-index: 3;
+  opacity: 0.35;
+}
+
+.hero__corner::before,
+.hero__corner::after {
+  content: '';
+  position: absolute;
+  background: var(--gold);
+}
+
+.hero__corner--tl {
+  top: 40px;
+  left: 40px;
+}
+
+.hero__corner--tl::before {
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 1px;
+}
+
+.hero__corner--tl::after {
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 40px;
+}
+
+.hero__corner--tr {
+  top: 40px;
+  right: 40px;
+}
+
+.hero__corner--tr::before {
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 1px;
+}
+
+.hero__corner--tr::after {
+  top: 0;
+  right: 0;
+  width: 1px;
+  height: 40px;
+}
+
+.hero__corner--bl {
+  bottom: 40px;
+  left: 40px;
+}
+
+.hero__corner--bl::before {
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 1px;
+}
+
+.hero__corner--bl::after {
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  height: 40px;
+}
+
+.hero__corner--br {
+  bottom: 40px;
+  right: 40px;
+}
+
+.hero__corner--br::before {
+  bottom: 0;
+  right: 0;
+  width: 40px;
+  height: 1px;
+}
+
+.hero__corner--br::after {
+  bottom: 0;
+  right: 0;
+  width: 1px;
+  height: 40px;
+}
+
+.hero__content {
+  position: relative;
+  z-index: 4;
+  max-width: 720px;
+  padding: 2rem;
+}
+
+/* Staggered entrance animation */
+@keyframes salonReveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes salonFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.hero__crest {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-variant: small-caps;
+  font-size: 0.85rem;
+  letter-spacing: 0.4em;
+  color: var(--gold);
+  opacity: 0;
+  animation: salonReveal 1s 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.hero__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 5rem;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.05;
+  margin: 0.75rem 0;
+  color: var(--ivory);
+  opacity: 0;
+  animation: salonReveal 1.2s 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.hero__title span {
+  display: block;
+  font-size: 2.2rem;
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  color: var(--gold);
+  margin-top: 0.25rem;
+}
+
+.hero .ornament {
+  opacity: 0;
+  animation: salonFadeIn 1s 0.9s ease forwards;
+}
+
+.hero__note {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1.15rem;
+  font-style: italic;
+  color: var(--ivory-dim);
+  margin-bottom: 2.5rem;
+  line-height: 1.9;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+  opacity: 0;
+  animation: salonReveal 1s 1.1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.hero__actions {
+  display: flex;
+  gap: 1.25rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: salonReveal 1s 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* ============================================
+   Gallery Page — Editorial Salon Header
+   ============================================ */
+
+.salon-header {
+  padding: 5rem 2rem 2rem;
+  text-align: center;
+  max-width: 650px;
+  margin: 0 auto;
+  opacity: 0;
+  animation: salonReveal 1s 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.salon-header__crest {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-variant: small-caps;
+  font-size: 0.8rem;
+  letter-spacing: 0.45em;
+  color: var(--gold);
+  margin-bottom: 1.25rem;
+}
+
+.salon-header__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 4.5rem;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.05;
+  color: var(--ivory);
+  margin-bottom: 0.5rem;
+}
+
+.salon-header__year {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1rem;
+  font-style: italic;
+  color: var(--rose);
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+}
+
+.salon-header__tagline {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  color: var(--ivory-dim);
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.02em;
+}
+
+.salon-header__nav a {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-variant: small-caps;
+  font-size: 0.85rem;
+  letter-spacing: 0.25em;
+  color: var(--ivory-dim);
+  border-bottom: 1px solid var(--border-gold);
+  padding-bottom: 3px;
+  transition: color 0.3s, border-color 0.3s;
+}
+
+.salon-header__nav a:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+/* ============================================
+   Gallery — Salon-Hang Masonry
+   ============================================ */
+
+.salon-gallery {
+  max-width: 1300px;
+  margin: 0 auto 4rem;
+  padding: 1rem 3rem;
+  columns: 3;
+  column-gap: 2rem;
+}
+
+.salon-gallery__empty {
+  column-span: all;
+  text-align: center;
+  color: var(--ivory-dim);
+  padding: 6rem 0;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: 1.2rem;
+}
+
+.salon-gallery .loading {
+  column-span: all;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-style: italic;
+}
+
+/* ---- Artwork — Gilded Frame ---- */
+
+.artwork {
+  break-inside: avoid;
+  margin-bottom: 2rem;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.artwork--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.artwork__frame {
+  position: relative;
+  overflow: hidden;
+  background: #0a0408;
+  border: 3px solid var(--gold-dark);
+  box-shadow:
+    inset 0 0 0 1px rgba(201, 164, 74, 0.15),
+    inset 0 0 30px rgba(10, 4, 6, 0.5),
+    0 8px 32px rgba(10, 4, 6, 0.5),
+    0 2px 8px rgba(10, 4, 6, 0.3);
+  transition: box-shadow 0.5s ease, transform 0.5s ease;
+}
+
+/* Gilded inner mat */
+.artwork__frame::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(201, 164, 74, 0.2);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Corner accent on frame */
+.artwork__frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(201, 164, 74, 0.12) 0%, transparent 30%),
+    linear-gradient(315deg, rgba(201, 164, 74, 0.06) 0%, transparent 30%);
+  z-index: 2;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.artwork:hover .artwork__frame {
+  box-shadow:
+    inset 0 0 0 1px rgba(201, 164, 74, 0.25),
+    inset 0 0 30px rgba(10, 4, 6, 0.4),
+    0 16px 48px rgba(10, 4, 6, 0.6),
+    0 4px 12px rgba(10, 4, 6, 0.3),
+    0 0 60px rgba(201, 164, 74, 0.06);
+  transform: translateY(-4px);
+}
+
+.artwork__image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ---- Artwork Plaque ---- */
+
+.artwork__plaque {
+  padding: 1rem 0.5rem 0.75rem;
+  text-align: center;
+  border-top: 1px solid var(--border-gold);
+  position: relative;
+}
+
+/* Tiny ornamental dot above plaque */
+.artwork__plaque::before {
+  content: '\2666';
+  position: absolute;
+  top: -0.5em;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.5rem;
+  color: var(--gold);
+  opacity: 0.4;
+  background: var(--bg-deep);
+  padding: 0 0.5rem;
+}
+
+.artwork__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 400;
+  font-variant: small-caps;
+  letter-spacing: 0.08em;
+  color: var(--ivory);
+  margin-bottom: 0.4rem;
+}
+
+.artwork__price {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.95rem;
+  color: var(--gold);
+  letter-spacing: 0.03em;
+}
+
+.artwork__buy {
+  display: block;
+  width: 100%;
+  margin-top: 0.6rem;
+  padding: 0.5rem 1.2rem;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-variant: small-caps;
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  background: none;
+  border: 1px solid var(--border-gold);
+  color: var(--gold);
+  cursor: pointer;
+  transition: all 0.35s ease;
+}
+
+.artwork__buy:hover {
+  background: var(--gold);
+  color: var(--bg-deep);
+  border-color: var(--gold);
+}
+
+.artwork__buy:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ============================================
+   Contact Modal
+   ============================================ */
+
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 10, 15, 0.88);
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.modal-backdrop.active {
+  display: flex;
+}
+
+.modal {
+  background:
+    linear-gradient(135deg, rgba(201, 164, 74, 0.04) 0%, transparent 50%),
+    var(--bg-burgundy);
+  border: 1px solid var(--border-gold);
+  padding: 3rem;
+  max-width: 440px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 24px 64px rgba(10, 4, 6, 0.7);
+}
+
+.modal::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px solid var(--border-gold);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.modal__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 300;
+  font-variant: small-caps;
+  letter-spacing: 0.15em;
+  color: var(--ivory);
+  margin-bottom: 1.5rem;
+}
+
+.modal__item {
+  margin-bottom: 1.25rem;
+  color: var(--ivory-dim);
+  font-size: 0.95rem;
+}
+
+.modal__item span {
+  display: block;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-variant: small-caps;
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  color: var(--rose);
+  margin-bottom: 0.25rem;
+}
+
+.modal__item a {
+  display: block;
+  font-size: 1.05rem;
+  color: var(--gold);
+}
+
+.modal__close {
+  margin-top: 1.75rem;
+}
+
+/* ============================================
+   Admin (preserved)
+   ============================================ */
+
+.admin {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+}
+
+.admin__form {
+  background: var(--bg-card);
+  border: 1px solid var(--border-gold);
+  padding: 2rem;
+  margin-bottom: 3rem;
+}
+
+.admin__form h2 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 300;
+  font-variant: small-caps;
+  letter-spacing: 0.12em;
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+  color: var(--ivory);
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--ivory-dim);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-variant: small-caps;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  background: var(--bg-deep);
+  border: 1px solid var(--border-gold);
+  color: var(--ivory);
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.95rem;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.form-group input[type="file"] {
+  padding: 0.5rem 0;
+  border: none;
+}
+
+/* ---- Status Messages ---- */
+
+.status {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.status--success {
+  background: rgba(76, 175, 80, 0.1);
+  border: 1px solid rgba(76, 175, 80, 0.25);
+  color: #81c784;
+}
+
+.status--error {
+  background: rgba(204, 68, 68, 0.1);
+  border: 1px solid rgba(204, 68, 68, 0.25);
+  color: #ef9a9a;
+}
+
+/* ---- Loading ---- */
+
+.loading {
+  text-align: center;
+  padding: 4rem 0;
+  color: var(--ivory-dim);
+}
+
+/* ============================================
+   Footer
+   ============================================ */
+
+.footer {
+  text-align: center;
+  padding: 2.5rem 2rem;
+  color: var(--ivory-dim);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-variant: small-caps;
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  border-top: 1px solid var(--border-gold);
+  margin-top: 3rem;
+  position: relative;
+}
+
+.footer::before {
+  content: '\2666';
+  position: absolute;
+  top: -0.45em;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.55rem;
+  color: var(--gold);
+  opacity: 0.4;
+  background: var(--bg-deep);
+  padding: 0 1rem;
+}
+
+.footer--floating {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-top: none;
+  margin-top: 0;
+  padding: 1rem;
+  z-index: 10;
+  background: linear-gradient(to top, var(--bg-deep) 60%, transparent);
+}
+
+.footer--floating::before {
+  display: none;
+}
+
+.footer__sep {
+  margin: 0 0.5rem;
+  opacity: 0.3;
+}
+
+.footer__admin {
+  color: var(--ivory-dim);
+  opacity: 0.3;
+  font-size: 0.75rem;
+  text-decoration: none;
+  transition: opacity 0.3s;
+}
+
+.footer__admin:hover {
+  opacity: 1;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 1000px) {
+  .salon-gallery {
+    columns: 2;
+    padding: 1rem 2rem;
+    column-gap: 1.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero__title {
+    font-size: 3rem;
+  }
+
+  .hero__title span {
+    font-size: 1.4rem;
+  }
+
+  .hero__note {
+    font-size: 1rem;
+  }
+
+  .hero__corner {
+    display: none;
+  }
+
+  .viewport-frame::before {
+    inset: 6px;
+  }
+
+  .viewport-frame::after {
+    inset: 9px;
+  }
+
+  .salon-header {
+    padding: 3.5rem 1.5rem 1.5rem;
+  }
+
+  .salon-header__title {
+    font-size: 2.8rem;
+  }
+
+  .salon-gallery {
+    columns: 1;
+    padding: 1rem 1.5rem;
+  }
+
+}

@@ -2,9 +2,9 @@
   "name": "buffy-braveart-api",
   "version": "1.0.0",
   "private": true,
+  "main": "src/functions/*.js",
   "dependencies": {
-    "@azure/data-tables": "^13.2.2",
-    "@azure/storage-blob": "^12.17.0",
+    "@azure/functions": "^4.12.0",
     "stripe": "^14.0.0"
   }
 }
