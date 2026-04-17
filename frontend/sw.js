@@ -27,15 +27,15 @@ self.addEventListener("fetch", function (event) {
     caches.match(event.request).then(function (cached) {
       if (cached) return cached;
 
-      return fetch(url, { mode: "no-cors" }).then(function (response) {
-        var clone = response.clone();
-        caches.open(CACHE_NAME).then(function (cache) {
-          cache.put(event.request, clone);
-        });
+      return fetch(event.request).then(function (response) {
+        if (response.ok) {
+          var clone = response.clone();
+          caches.open(CACHE_NAME).then(function (cache) {
+            cache.put(event.request, clone);
+          });
+        }
         return response;
       });
-    }).catch(function () {
-      return fetch(url, { mode: "no-cors" });
     })
   );
 });
