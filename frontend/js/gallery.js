@@ -1,5 +1,9 @@
 // Gallery page — Salon-hang masonry layout with gilded frames
 
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js");
+}
+
 (function () {
   var galleryEl = document.getElementById("gallery");
   var loadingEl = document.getElementById("loading");
