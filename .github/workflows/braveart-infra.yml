@@ -1,4 +1,4 @@
-name: project-infra
+name: braveart-infra
 
 on:
   workflow_dispatch:
@@ -16,10 +16,15 @@ on:
         default: plan
         options: [plan, apply, destroy]
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   terraform:
     uses: liam-goodchild/pipeline-engineering-templates/.github/workflows/terraform.yml@major/migrating-to-gha
     with:
+      environment: ${{ inputs.environment }}
       terraform-action: ${{ inputs.terraform-action }}
       backend-resource-group-name: rg-tfs-platform-${{ inputs.environment }}-uks-01
       backend-storage-account-name: sttfsplatform${{ inputs.environment }}uks01
