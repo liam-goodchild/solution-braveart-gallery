@@ -1,0 +1,126 @@
+name: SemVer Git Versioning
+
+on:
+  workflow_call:
+    inputs:
+      default-action:
+        description: 'Default bump type when no pattern detected'
+        type: string
+        default: patch
+      default-branch:
+        description: 'Branch where versioning is allowed to run'
+        type: string
+        default: main
+
+permissions:
+  contents: write
+
+jobs:
+  version:
+    name: SemVer Git Versioning
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create SemVer Tag
+        run: |
+          set -euo pipefail
+
+          default_action="${{ inputs.default-action }}"
+          default_branch="${{ inputs.default-branch }}"
+
+          #####################################
+          # Determine Branch.
+          #####################################
+          current_branch="${GITHUB_REF#refs/heads/}"
+          if [[ "$current_branch" != "$default_branch" ]]; then
+            echo "::error::Current branch '$current_branch' is not the default branch '$default_branch', exiting."
+            exit 1
+          fi
+
+          #####################################
+          # Calculate Base Version.
+          #####################################
+          echo "::group::Calculating base version"
+
+          base_tag=$(git tag -l 'v*' --sort=-v:refname | grep -E '^v?[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}$' | head -1 || true)
+
+          if [[ -z "$base_tag" ]]; then
+            echo "No tags found, using 0.0.0 as base version."
+            base_tag="0.0.0"
+          else
+            base_tag="${base_tag#v}"
+            echo "::notice::Using v$base_tag as base version."
+          fi
+
+          IFS='.' read -r major minor patch <<< "$base_tag"
+          echo "::endgroup::"
+
+          #####################################
+          # Calculate Next Version.
+          #####################################
+          echo "::group::Calculating next version"
+
+          git_log=$(git log -1 --pretty=%B)
+
+          if [[ -z "$git_log" ]]; then
+            echo "::error::No git logs found, unable to determine next version."
+            exit 1
+          fi
+
+          # Check for no-bump
+          if echo "$git_log" | grep -qiE '(no.?bump|nobump)'; then
+            echo "::notice::No bump message found, no further action required."
+            exit 0
+          fi
+
+          # Detect bump type from commit message
+          bump_type=""
+          if echo "$git_log" | grep -qE '(major/|\[MAJOR\])'; then
+            bump_type="major"
+          elif echo "$git_log" | grep -qE '(feature/|\[FEATURE\])'; then
+            bump_type="minor"
+          elif echo "$git_log" | grep -qE '(patch/|\[PATCH\])'; then
+            bump_type="patch"
+          fi
+
+          if [[ -z "$bump_type" ]]; then
+            echo "Unable to determine version from git log, using default: '$default_action'."
+            bump_type="$default_action"
+          fi
+
+          case "$bump_type" in
+            major)
+              echo "Bumping major version."
+              new_tag="v$((major + 1)).0.0"
+              ;;
+            minor)
+              echo "Bumping minor version."
+              new_tag="v${major}.$((minor + 1)).0"
+              ;;
+            patch)
+              echo "Bumping patch version."
+              new_tag="v${major}.${minor}.$((patch + 1))"
+              ;;
+          esac
+
+          echo "::notice::New version will be $new_tag."
+          echo "::endgroup::"
+
+          #####################################
+          # Git Tag & Push.
+          #####################################
+          echo "::group::Tagging repository"
+
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+
+          git tag "$new_tag"
+          git push --tags --quiet
+          echo "::notice::Successfully created tag $new_tag."
+
+          echo "::endgroup::"
