@@ -5,7 +5,7 @@ app.http("getArtworks", {
   methods: ["GET"],
   authLevel: "anonymous",
   route: "artworks",
-  handler: async (request, context) => {
+  handler: async () => {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
     const products = await stripe.products.list({
@@ -14,7 +14,7 @@ app.http("getArtworks", {
     });
 
     const artworks = products.data
-      .filter((p) => p.default_price && p.default_price.unit_amount)
+      .filter((p) => p.default_price?.unit_amount)
       .map((p) => ({
         id: p.id,
         priceId: p.default_price.id,

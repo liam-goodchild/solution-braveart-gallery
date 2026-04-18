@@ -13,7 +13,7 @@ variable "workload" {
 variable "environment" {
   description = "Environment abbreviation (prd, dev, etc.)"
   type        = string
-  default     = "prd"
+  default     = "dev"
 }
 
 variable "location" {

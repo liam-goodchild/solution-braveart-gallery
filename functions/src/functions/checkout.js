@@ -5,7 +5,7 @@ app.http("checkout", {
   methods: ["POST"],
   authLevel: "anonymous",
   route: "checkout",
-  handler: async (request, context) => {
+  handler: async (request) => {
     const body = await request.json();
 
     if (!body.priceId) {
@@ -26,8 +26,8 @@ app.http("checkout", {
           quantity: 1,
         },
       ],
-      success_url: frontendUrl + "/gallery?checkout=success",
-      cancel_url: frontendUrl + "/gallery?checkout=cancelled",
+      success_url: `${frontendUrl}/gallery?checkout=success`,
+      cancel_url: `${frontendUrl}/gallery?checkout=cancelled`,
     });
 
     return {

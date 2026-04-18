@@ -8,23 +8,22 @@ Never read, display, or reference the contents of `functions/local.settings.json
 
 ## Project Overview
 
-Buffy Braveart Gallery — an art gallery e-commerce site built as an Azure Static Web App with a serverless API backend. Artists upload artwork via an admin panel; visitors browse and purchase via Stripe Checkout.
+Buffy Braveart Gallery — an art gallery e-commerce site built as an Azure Static Web App with a serverless API backend. Visitors browse artwork and purchase via Stripe Checkout. Artwork catalogue and images are managed directly in Stripe (products).
 
 ## Naming Convention
 
 All Azure resources follow: `{type}-{project}-{env}-{region}-{instance}`
 
-| Variable | Value |
-|---|---|
-| Project | `braveart` |
-| Environment | `prd` |
-| Region | `uks` (uksouth) |
-| Instance | `01` |
+| Variable    | Value           |
+| ----------- | --------------- |
+| Project     | `braveart`      |
+| Environment | `prd`           |
+| Region      | `uks` (uksouth) |
+| Instance    | `01`            |
 
-| Resource | Name |
-|---|---|
-| Resource group | `rg-braveart-prd-uks-01` |
-| Storage account | `stbraveartprduks01` |
+| Resource       | Name                        |
+| -------------- | --------------------------- |
+| Resource group | `rg-braveart-prd-uks-01`    |
 | Static Web App | `stapp-braveart-prd-uks-01` |
 
 ## Architecture
@@ -34,16 +33,21 @@ All Azure resources follow: `{type}-{project}-{env}-{region}-{instance}`
 **API** (`functions/`): Azure Functions v4 (Node.js, programming model v4). Each function is a standalone file in `functions/src/functions/`. Functions are registered via `app.http()` — no function.json files.
 
 **Data flow**:
-- Artwork metadata → Azure Table Storage (table: `artworks`, partitionKey: `artwork`)
-- Artwork images → Azure Blob Storage (container: `artwork-images`, public blob access)
-- Image upload is a 3-step client-side process: get SAS URL → PUT to blob → POST metadata
+
+- Artwork catalogue → Stripe Products (active products with a default price)
+- Artwork images → Stripe product images
 - Purchases → Stripe Checkout sessions (currency: GBP)
 
-**Secrets**: Stored in the ADO `braveart-prd` variable group. Synced to SWA app settings at deploy time via the `deploy-swa` pipeline. Local dev reads from `functions/local.settings.json`.
+**Secrets**: Stored in GitHub Actions environments (`dev`, `prd`). OIDC used for Azure auth. `STRIPE_SECRET_KEY` and `FRONTEND_URL` are set as SWA app settings via Terraform. Local dev reads from `functions/local.settings.json`.
 
-**Auth & routing** (`frontend/staticwebapp.config.json`): Admin routes and write APIs are restricted to the `admin` role via Azure Static Web Apps built-in auth (AAD). Unauthenticated users get a 302 to `/.auth/login/aad`.
+**Auth & routing** (`frontend/staticwebapp.config.json`): No role-based restrictions. `/gallery` rewrites to `gallery.html`. Global security headers applied (CSP, X-Frame-Options, X-Content-Type-Options).
 
-**Infrastructure** (`infra/`): Terraform (azurerm ~> 4.0). Stripe secret key is passed as a variable — use `-var` or a `.tfvars` file (gitignored).
+**Infrastructure** (`infra/`): Terraform (azurerm ~> 4.0). Custom domain: `buffybraveart.com`. Stripe secret key passed as a Terraform variable.
+
+**CI/CD** (`.github/workflows/`): GitHub Actions with OIDC authentication.
+
+- `braveart-swa.yml` — deploys frontend + API to SWA (manual trigger, `dev`/`prd` environments)
+- `braveart-infra.yml` — runs Terraform plan/apply/destroy (auto-triggers on `infra/**` pushes to feature branches)
 
 ## Development
 
@@ -59,20 +63,14 @@ The frontend is static files — serve `frontend/` with any HTTP server, or use 
 
 ### Required Environment Variables
 
-| Variable | Used by |
-|---|---|
-| `STORAGE_CONNECTION_STRING` | All functions (Table + Blob) |
-| `STORAGE_ACCOUNT_NAME` | `uploadUrl` (SAS generation) |
-| `STORAGE_ACCOUNT_KEY` | `uploadUrl` (SAS generation) |
-| `STRIPE_SECRET_KEY` | `checkout` |
-| `FRONTEND_URL` | `checkout` (success/cancel redirects) |
+| Variable            | Used by                               |
+| ------------------- | ------------------------------------- |
+| `STRIPE_SECRET_KEY` | `getArtworks`, `checkout`             |
+| `FRONTEND_URL`      | `checkout` (success/cancel redirects) |
 
 ### API Endpoints
 
-| Method | Route | Auth | Function |
-|---|---|---|---|
-| GET | `/api/artworks` | anonymous | `getArtworks` |
-| POST | `/api/artworks` | admin | `createArtwork` |
-| DELETE | `/api/artworks/{id}` | admin | `deleteArtwork` |
-| POST | `/api/upload-url` | admin | `uploadUrl` |
-| POST | `/api/checkout` | anonymous | `checkout` |
+| Method | Route           | Auth      | Function      |
+| ------ | --------------- | --------- | ------------- |
+| GET    | `/api/artworks` | anonymous | `getArtworks` |
+| POST   | `/api/checkout` | anonymous | `checkout`    |
