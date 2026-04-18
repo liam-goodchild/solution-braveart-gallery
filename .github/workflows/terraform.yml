@@ -51,7 +51,7 @@ jobs:
           container_name: ${{ github.event.repository.name }}
           azure_client_id: ${{ secrets.AZURE_CLIENT_ID }}
           azure_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
-          azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          azure_subscription_id: ${{ secrets.AZURE_PLATFORM_SUBSCRIPTION_ID }}
 
       - name: "Terraform Init"
         run: |
@@ -59,7 +59,8 @@ jobs:
             -backend-config="resource_group_name=rg-tfs-platform-prd-uks-01" \
             -backend-config="storage_account_name=sttfsplatformprduks01" \
             -backend-config="container_name=infra-landingzone-platform" \
-            -backend-config="key=terraform.tfstate"
+            -backend-config="key=terraform.tfstate" \
+            -backend-config="subscription_id=${{ secrets.AZURE_PLATFORM_SUBSCRIPTION_ID }}"
 
       - name: "Terraform Plan"
         if: inputs.terraform_action == 'plan' || inputs.terraform_action == ''
@@ -90,4 +91,4 @@ jobs:
           container_name: ${{ github.event.repository.name }}
           azure_client_id: ${{ secrets.AZURE_CLIENT_ID }}
           azure_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
-          azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          azure_subscription_id: ${{ secrets.AZURE_PLATFORM_SUBSCRIPTION_ID }}
