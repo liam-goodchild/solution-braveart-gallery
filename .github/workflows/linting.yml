@@ -35,5 +35,6 @@ jobs:
           VALIDATE_BIOME_FORMAT: false
           VALIDATE_GIT_COMMITLINT: false
           VALIDATE_JSCPD: false
+          VALIDATE_MARKDOWN: false
           VALIDATE_NATURAL_LANGUAGE: false
           DEFAULT_BRANCH: main

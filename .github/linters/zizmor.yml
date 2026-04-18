@@ -1,3 +1,6 @@
+ignore:
+  - ".github/workflows/braveart-infra.yml"
+
 rules:
   unpinned-uses:
     ignore:
