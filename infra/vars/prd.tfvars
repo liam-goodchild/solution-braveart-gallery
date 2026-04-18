@@ -1,2 +1,2 @@
-environment = "prd"
+environment   = "prd"
 dns_delegated = true
