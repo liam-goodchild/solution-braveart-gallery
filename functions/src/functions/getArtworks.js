@@ -5,7 +5,7 @@ app.http("getArtworks", {
   methods: ["GET"],
   authLevel: "anonymous",
   route: "artworks",
-  handler: async (_request, _context) => {
+  handler: async () => {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
     const products = await stripe.products.list({

@@ -5,7 +5,7 @@ app.http("checkout", {
   methods: ["POST"],
   authLevel: "anonymous",
   route: "checkout",
-  handler: async (request, _context) => {
+  handler: async (request) => {
     const body = await request.json();
 
     if (!body.priceId) {

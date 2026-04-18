@@ -18,7 +18,7 @@
     frame.className = "artwork__frame";
 
     if (artwork.imageUrl) {
-      var img = document.createElement("img");
+      const img = document.createElement("img");
       img.className = "artwork__image";
       img.src = artwork.imageUrl;
       img.alt = artwork.name;
