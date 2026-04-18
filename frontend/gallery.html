@@ -1,37 +1,39 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Collection &mdash; Buffy Braveart Gallery</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Collection &mdash; Buffy Braveart Gallery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="canvas-texture" aria-hidden="true"></div>
+    <div class="viewport-frame" aria-hidden="true"></div>
 
-  <div class="canvas-texture" aria-hidden="true"></div>
-  <div class="viewport-frame" aria-hidden="true"></div>
+    <header class="salon-header">
+      <p class="salon-header__crest">The Private Collection</p>
+      <h1 class="salon-header__title">Buffy<br />Braveart</h1>
+      <div class="ornament" aria-hidden="true">&#9830;</div>
+      <p class="salon-header__tagline">
+        Original digital artwork &mdash; each piece a fragment of imagination
+      </p>
+      <nav class="salon-header__nav">
+        <a href="/">Return Home</a>
+      </nav>
+    </header>
 
-  <header class="salon-header">
-    <p class="salon-header__crest">The Private Collection</p>
-    <h1 class="salon-header__title">Buffy<br>Braveart</h1>
-    <div class="ornament" aria-hidden="true">&#9830;</div>
-    <p class="salon-header__tagline">Original digital artwork &mdash; each piece a fragment of imagination</p>
-    <nav class="salon-header__nav">
-      <a href="/">Return Home</a>
-    </nav>
-  </header>
+    <main class="salon-gallery" id="gallery">
+      <div class="loading" id="loading">Loading the collection&hellip;</div>
+    </main>
 
-  <main class="salon-gallery" id="gallery">
-    <div class="loading" id="loading">Loading the collection&hellip;</div>
-  </main>
+    <footer class="footer">&copy; 2026 Buffy Braveart Gallery</footer>
 
-  <footer class="footer">
-    &copy; 2026 Buffy Braveart Gallery
-  </footer>
-
-  <script src="js/gallery.js"></script>
-</body>
+    <script src="js/gallery.js"></script>
+  </body>
 </html>

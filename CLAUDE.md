@@ -14,16 +14,16 @@ Buffy Braveart Gallery — an art gallery e-commerce site built as an Azure Stat
 
 All Azure resources follow: `{type}-{project}-{env}-{region}-{instance}`
 
-| Variable | Value |
-|---|---|
-| Project | `braveart` |
-| Environment | `prd` |
-| Region | `uks` (uksouth) |
-| Instance | `01` |
+| Variable    | Value           |
+| ----------- | --------------- |
+| Project     | `braveart`      |
+| Environment | `prd`           |
+| Region      | `uks` (uksouth) |
+| Instance    | `01`            |
 
-| Resource | Name |
-|---|---|
-| Resource group | `rg-braveart-prd-uks-01` |
+| Resource       | Name                        |
+| -------------- | --------------------------- |
+| Resource group | `rg-braveart-prd-uks-01`    |
 | Static Web App | `stapp-braveart-prd-uks-01` |
 
 ## Architecture
@@ -33,6 +33,7 @@ All Azure resources follow: `{type}-{project}-{env}-{region}-{instance}`
 **API** (`functions/`): Azure Functions v4 (Node.js, programming model v4). Each function is a standalone file in `functions/src/functions/`. Functions are registered via `app.http()` — no function.json files.
 
 **Data flow**:
+
 - Artwork catalogue → Stripe Products (active products with a default price)
 - Artwork images → Stripe product images
 - Purchases → Stripe Checkout sessions (currency: GBP)
@@ -44,6 +45,7 @@ All Azure resources follow: `{type}-{project}-{env}-{region}-{instance}`
 **Infrastructure** (`infra/`): Terraform (azurerm ~> 4.0). Custom domain: `buffybraveart.com`. Stripe secret key passed as a Terraform variable.
 
 **CI/CD** (`.github/workflows/`): GitHub Actions with OIDC authentication.
+
 - `braveart-swa.yml` — deploys frontend + API to SWA (manual trigger, `dev`/`prd` environments)
 - `braveart-infra.yml` — runs Terraform plan/apply/destroy (auto-triggers on `infra/**` pushes to feature branches)
 
@@ -61,14 +63,14 @@ The frontend is static files — serve `frontend/` with any HTTP server, or use 
 
 ### Required Environment Variables
 
-| Variable | Used by |
-|---|---|
-| `STRIPE_SECRET_KEY` | `getArtworks`, `checkout` |
-| `FRONTEND_URL` | `checkout` (success/cancel redirects) |
+| Variable            | Used by                               |
+| ------------------- | ------------------------------------- |
+| `STRIPE_SECRET_KEY` | `getArtworks`, `checkout`             |
+| `FRONTEND_URL`      | `checkout` (success/cancel redirects) |
 
 ### API Endpoints
 
-| Method | Route | Auth | Function |
-|---|---|---|---|
-| GET | `/api/artworks` | anonymous | `getArtworks` |
-| POST | `/api/checkout` | anonymous | `checkout` |
+| Method | Route           | Auth      | Function      |
+| ------ | --------------- | --------- | ------------- |
+| GET    | `/api/artworks` | anonymous | `getArtworks` |
+| POST   | `/api/checkout` | anonymous | `checkout`    |
