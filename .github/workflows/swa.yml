@@ -1,4 +1,4 @@
-name: braveart-swa
+name: Static Web App
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
   deploy:
     name: Deploy to SWA
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment || 'dev' }}
+    environment: ${{ inputs.environment || 'prd' }}
     steps:
       - uses: actions/checkout@v4
 
