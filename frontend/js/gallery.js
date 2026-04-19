@@ -127,14 +127,22 @@
 
   function setCached(data) {
     try {
-      sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: data }));
+      sessionStorage.setItem(
+        CACHE_KEY,
+        JSON.stringify({ ts: Date.now(), data: data }),
+      );
     } catch (_) {}
   }
 
   var cached = getCached();
   var artworkPromise = cached
     ? Promise.resolve(cached)
-    : fetch("/api/artworks").then((res) => res.json()).then((data) => { setCached(data); return data; });
+    : fetch("/api/artworks")
+        .then((res) => res.json())
+        .then((data) => {
+          setCached(data);
+          return data;
+        });
 
   artworkPromise
     .then((artworks) => {
