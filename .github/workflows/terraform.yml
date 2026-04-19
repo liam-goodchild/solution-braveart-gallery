@@ -34,7 +34,7 @@ jobs:
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       ARM_USE_OIDC: true
-      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      TF_VAR_stripe_secret_key: ${{ secrets.STRIPE_SECRET_KEY }}
     steps:
       - name: "Checkout"
         uses: actions/checkout@v4
@@ -54,11 +54,13 @@ jobs:
           azure_subscription_id: ${{ secrets.AZURE_PLATFORM_SUBSCRIPTION_ID }}
 
       - name: "Terraform Init"
+        env:
+          REPO_NAME: ${{ github.event.repository.name }}
         run: |
           terraform -chdir=infra init \
             -backend-config="resource_group_name=rg-tfs-platform-prd-uks-01" \
             -backend-config="storage_account_name=sttfsplatformprduks01" \
-            -backend-config="container_name=infra-landingzone-platform" \
+            -backend-config="container_name=$REPO_NAME" \
             -backend-config="key=terraform.tfstate" \
             -backend-config="subscription_id=${{ secrets.AZURE_PLATFORM_SUBSCRIPTION_ID }}"
 
