@@ -118,10 +118,13 @@
   var CACHE_TTL = 5 * 60 * 1000;
 
   function getCached() {
+    var entry;
     try {
-      var entry = JSON.parse(sessionStorage.getItem(CACHE_KEY));
+      entry = JSON.parse(sessionStorage.getItem(CACHE_KEY));
       if (entry && Date.now() - entry.ts < CACHE_TTL) return entry.data;
-    } catch (_) {}
+    } catch (e) {
+      void e;
+    }
     return null;
   }
 
@@ -131,7 +134,9 @@
         CACHE_KEY,
         JSON.stringify({ ts: Date.now(), data: data }),
       );
-    } catch (_) {}
+    } catch (e) {
+      void e;
+    }
   }
 
   var cached = getCached();
