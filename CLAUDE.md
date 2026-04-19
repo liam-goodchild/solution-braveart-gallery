@@ -46,8 +46,14 @@ All Azure resources follow: `{type}-{project}-{env}-{region}-{instance}`
 
 **CI/CD** (`.github/workflows/`): GitHub Actions with OIDC authentication.
 
-- `braveart-swa.yml` — deploys frontend + API to SWA (manual trigger, `dev`/`prd` environments)
-- `braveart-infra.yml` — runs Terraform plan/apply/destroy (auto-triggers on `infra/**` pushes to feature branches)
+- `swa.yml` — deploys frontend + API to SWA. Auto-triggers on `frontend/**` or `functions/**` pushes to feature branches; manual trigger selects `dev`/`prd` environment.
+- `terraform.yml` — runs Terraform plan/apply/destroy. Auto-triggers on `infra/**` pushes to feature branches (always targets `prd`). Manual trigger selects action.
+- `linting.yml` — Super-Linter on PRs to `main` (zizmor, Checkov, TFLint, Stylelint). Config in `.github/linters/`.
+- `tag.yml` — creates a semver tag on PR merge. Branch prefix determines bump: `major/`, `minor/`, `patch/`.
+
+**Branch naming**: Use `major/`, `minor/`, or `patch/` prefixes. This is required — it controls which CI workflows trigger and what version tag is created on merge.
+
+**Custom domain**: `dns_delegated` Terraform variable is `false` by default. Set to `true` in the tfvars only after GoDaddy nameservers have been pointed to Azure DNS, otherwise the custom domain resources will fail to provision.
 
 ## Development
 
