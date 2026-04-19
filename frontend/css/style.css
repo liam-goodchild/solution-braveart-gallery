@@ -615,19 +615,6 @@ img {
   position: relative;
 }
 
-/* Tiny ornamental dot above plaque */
-.artwork__plaque::before {
-  content: "\2666";
-  position: absolute;
-  top: -0.5em;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.5rem;
-  color: var(--gold);
-  opacity: 0.4;
-  background: var(--bg-deep);
-  padding: 0 0.5rem;
-}
 
 .artwork__title {
   font-family: "Cormorant Garamond", Georgia, serif;
@@ -848,18 +835,6 @@ img {
   position: relative;
 }
 
-.footer::before {
-  content: "\2666";
-  position: absolute;
-  top: -0.45em;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.55rem;
-  color: var(--gold);
-  opacity: 0.4;
-  background: var(--bg-deep);
-  padding: 0 1rem;
-}
 
 .footer--floating {
   position: fixed;
