@@ -409,6 +409,10 @@ img {
   animation: salon-fade-in 1s 0.9s ease forwards;
 }
 
+.salon-header .ornament {
+  opacity: 1;
+}
+
 .hero__note {
   font-family: "EB Garamond", Georgia, serif;
   font-size: 1.15rem;
@@ -613,20 +617,6 @@ img {
   text-align: center;
   border-top: 1px solid var(--border-gold);
   position: relative;
-}
-
-/* Tiny ornamental dot above plaque */
-.artwork__plaque::before {
-  content: "\2666";
-  position: absolute;
-  top: -0.5em;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.5rem;
-  color: var(--gold);
-  opacity: 0.4;
-  background: var(--bg-deep);
-  padding: 0 0.5rem;
 }
 
 .artwork__title {
@@ -846,19 +836,6 @@ img {
   border-top: 1px solid var(--border-gold);
   margin-top: 3rem;
   position: relative;
-}
-
-.footer::before {
-  content: "\2666";
-  position: absolute;
-  top: -0.45em;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.55rem;
-  color: var(--gold);
-  opacity: 0.4;
-  background: var(--bg-deep);
-  padding: 0 1rem;
 }
 
 .footer--floating {

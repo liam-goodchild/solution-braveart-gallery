@@ -69,7 +69,7 @@
         })
         .then((data) => {
           if (data.url) {
-            window.location.href = data.url;
+            window.open(data.url, "_blank");
             buyBtn.disabled = false;
             buyBtn.textContent = "Purchase";
           } else {
@@ -114,10 +114,42 @@
     });
   }
 
-  fetch("/api/artworks")
-    .then((res) => {
-      return res.json();
-    })
+  var CACHE_KEY = "braveart_artworks";
+  var CACHE_TTL = 5 * 60 * 1000;
+
+  function getCached() {
+    var entry;
+    try {
+      entry = JSON.parse(sessionStorage.getItem(CACHE_KEY));
+      if (entry && Date.now() - entry.ts < CACHE_TTL) return entry.data;
+    } catch (e) {
+      void e;
+    }
+    return null;
+  }
+
+  function setCached(data) {
+    try {
+      sessionStorage.setItem(
+        CACHE_KEY,
+        JSON.stringify({ ts: Date.now(), data: data }),
+      );
+    } catch (e) {
+      void e;
+    }
+  }
+
+  var cached = getCached();
+  var artworkPromise = cached
+    ? Promise.resolve(cached)
+    : fetch("/api/artworks")
+        .then((res) => res.json())
+        .then((data) => {
+          setCached(data);
+          return data;
+        });
+
+  artworkPromise
     .then((artworks) => {
       var empty;
       loadingEl.remove();
