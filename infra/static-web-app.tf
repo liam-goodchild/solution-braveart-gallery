@@ -10,6 +10,13 @@ resource "azurerm_static_web_app" "this" {
     STRIPE_SECRET_KEY = var.stripe_secret_key
     FRONTEND_URL      = "https://${var.domain_name}"
   }
+
+  lifecycle {
+    ignore_changes = [
+      repository_branch,
+      repository_url,
+    ]
+  }
 }
 
 resource "azurerm_static_web_app_custom_domain" "apex" {
