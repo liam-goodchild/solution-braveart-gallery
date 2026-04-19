@@ -69,7 +69,7 @@
         })
         .then((data) => {
           if (data.url) {
-            window.location.href = data.url;
+            window.open(data.url, "_blank");
             buyBtn.disabled = false;
             buyBtn.textContent = "Purchase";
           } else {
