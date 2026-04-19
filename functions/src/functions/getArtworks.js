@@ -1,11 +1,19 @@
 const { app } = require("@azure/functions");
 const Stripe = require("stripe");
 
+let cachedArtworks = null;
+let cacheExpiry = 0;
+const CACHE_TTL = 5 * 60 * 1000;
+
 app.http("getArtworks", {
   methods: ["GET"],
   authLevel: "anonymous",
   route: "artworks",
   handler: async () => {
+    if (cachedArtworks && Date.now() < cacheExpiry) {
+      return { jsonBody: cachedArtworks };
+    }
+
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
     const products = await stripe.products.list({
@@ -27,6 +35,9 @@ app.http("getArtworks", {
               : `https://files.stripe.com/links/${p.images[0]}`)
           : null,
       }));
+
+    cachedArtworks = artworks;
+    cacheExpiry = Date.now() + CACHE_TTL;
 
     return {
       jsonBody: artworks,
