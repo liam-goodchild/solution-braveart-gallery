@@ -409,6 +409,10 @@ img {
   animation: salon-fade-in 1s 0.9s ease forwards;
 }
 
+.salon-header .ornament {
+  opacity: 1;
+}
+
 .hero__note {
   font-family: "EB Garamond", Georgia, serif;
   font-size: 1.15rem;
@@ -614,7 +618,6 @@ img {
   border-top: 1px solid var(--border-gold);
   position: relative;
 }
-
 
 .artwork__title {
   font-family: "Cormorant Garamond", Georgia, serif;
@@ -834,7 +837,6 @@ img {
   margin-top: 3rem;
   position: relative;
 }
-
 
 .footer--floating {
   position: fixed;
