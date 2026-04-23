@@ -41,7 +41,7 @@ variable "domain_name" {
 }
 
 variable "dns_delegated" {
-  description = "Set to true after GoDaddy nameservers point to Azure DNS"
+  description = "Create Azure DNS records and Static Web App custom domains once DNS is ready"
   type        = bool
   default     = false
 }
@@ -50,5 +50,24 @@ variable "stripe_secret_key" {
   description = "Stripe secret API key"
   type        = string
   sensitive   = true
+  default     = ""
+}
+
+variable "cloudflare_enabled" {
+  description = "Create the Cloudflare zone and DNS records for the custom domain."
+  type        = bool
+  default     = false
+}
+
+variable "cloudflare_api_token" {
+  description = "Cloudflare API token with Zone and DNS edit permissions."
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "cloudflare_account_id" {
+  description = "Cloudflare account ID that will own the DNS zone."
+  type        = string
   default     = ""
 }

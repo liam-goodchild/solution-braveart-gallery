@@ -1,2 +1,10 @@
-environment   = "prd"
-dns_delegated = true
+#########################################
+# ENVIRONMENT
+#########################################
+environment = "prd"
+
+#########################################
+# DNS
+#########################################
+dns_delegated      = true
+cloudflare_enabled = true
