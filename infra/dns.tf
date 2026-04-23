@@ -78,14 +78,3 @@ resource "cloudflare_dns_record" "apex" {
   proxied = true
   ttl     = 1
 }
-
-resource "cloudflare_dns_record" "www" {
-  for_each = local.cloudflare_dns_zones
-
-  zone_id = cloudflare_zone.public[each.key].id
-  type    = "CNAME"
-  name    = "www.${each.value}"
-  content = azurerm_static_web_app.this.default_host_name
-  proxied = true
-  ttl     = 1
-}
