@@ -51,6 +51,7 @@
     plaque.appendChild(price);
 
     var buyBtn = document.createElement("button");
+    buyBtn.type = "button";
     buyBtn.className = "artwork__buy";
     buyBtn.textContent = "Purchase";
     buyBtn.addEventListener("click", () => {
@@ -77,9 +78,7 @@
         })
         .then((data) => {
           if (data.url) {
-            window.open(data.url, "_blank");
-            buyBtn.disabled = false;
-            buyBtn.textContent = "Purchase";
+            window.location.assign(data.url);
           } else {
             throw new Error(data.error || "Checkout failed");
           }
