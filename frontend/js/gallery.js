@@ -5,10 +5,15 @@
   var loadingEl = document.getElementById("loading");
 
   function formatPrice(cents, currency) {
-    return new Intl.NumberFormat("en-ZA", {
-      style: "currency",
-      currency: currency || "ZAR",
-    }).format(cents / 100);
+    var amount = new Intl.NumberFormat("en-ZA", {
+      maximumFractionDigits: 0,
+      minimumFractionDigits: 0,
+      useGrouping: true,
+    })
+      .format(cents / 100)
+      .replace(/\s/g, ",");
+
+    return `${currency || "R"} ${amount}`;
   }
 
   function createCard(artwork, index) {
