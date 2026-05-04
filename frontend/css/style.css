@@ -438,7 +438,7 @@ img {
   font-variant: small-caps;
   font-size: 0.83rem;
   letter-spacing: 0.25em;
-  color: var(--ivory-ghost);
+  color: var(--ivory-dim);
   border-bottom: 1px solid var(--border-red);
   padding-bottom: 2px;
   transition:
@@ -593,7 +593,7 @@ img {
   letter-spacing: 0.2em;
   background: none;
   border: 1px solid var(--border-red);
-  color: var(--ivory-ghost);
+  color: var(--ivory-dim);
   cursor: pointer;
   transition: all 0.4s ease;
 }
