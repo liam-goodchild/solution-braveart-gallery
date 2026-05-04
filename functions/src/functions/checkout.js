@@ -33,7 +33,10 @@ app.http("checkout", {
     if (!body.artworkId) {
       return {
         status: 400,
-        jsonBody: { error: "artworkId is required" },
+        jsonBody: {
+          error:
+            "artworkId is required. Please refresh the gallery page and try again.",
+        },
       };
     }
 

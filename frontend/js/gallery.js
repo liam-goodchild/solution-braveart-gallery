@@ -1,4 +1,4 @@
-// Gallery page — Salon-hang masonry layout with gilded frames
+// Gallery page — Salon-hang masonry layout
 
 (() => {
   var galleryEl = document.getElementById("gallery");
@@ -117,7 +117,7 @@
     });
   }
 
-  var CACHE_KEY = "braveart_artworks";
+  var CACHE_KEY = "braveart_artworks_yoco_v1";
   var CACHE_TTL = 5 * 60 * 1000;
 
   function getCached() {
