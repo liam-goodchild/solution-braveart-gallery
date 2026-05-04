@@ -7,8 +7,8 @@ resource "azurerm_static_web_app" "this" {
   tags                = local.tags
 
   app_settings = {
-    STRIPE_SECRET_KEY = var.stripe_secret_key
-    FRONTEND_URL      = "https://${var.domain_name}"
+    YOCO_SECRET_KEY = var.yoco_secret_key
+    FRONTEND_URL    = "https://${var.domain_name}"
   }
 
   lifecycle {

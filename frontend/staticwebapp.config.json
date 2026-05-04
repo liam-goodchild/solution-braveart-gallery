@@ -1,13 +1,22 @@
 {
   "routes": [
     {
+      "route": "/js/*",
+      "headers": {
+        "Cache-Control": "no-cache"
+      }
+    },
+    {
       "route": "/gallery",
-      "rewrite": "/gallery.html"
+      "rewrite": "/gallery.html",
+      "headers": {
+        "Cache-Control": "no-cache"
+      }
     }
   ],
   "globalHeaders": {
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "DENY",
-    "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https://files.stripe.com data:; connect-src 'self'; frame-src https://checkout.stripe.com"
+    "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self'; frame-src 'none'"
   }
 }
