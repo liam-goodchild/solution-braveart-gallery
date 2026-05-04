@@ -4,8 +4,11 @@
   var galleryEl = document.getElementById("gallery");
   var loadingEl = document.getElementById("loading");
 
-  function formatPrice(pence) {
-    return `£${(pence / 100).toFixed(2)}`;
+  function formatPrice(cents, currency) {
+    return new Intl.NumberFormat("en-ZA", {
+      style: "currency",
+      currency: currency || "ZAR",
+    }).format(cents / 100);
   }
 
   function createCard(artwork, index) {
@@ -39,7 +42,7 @@
 
     var price = document.createElement("span");
     price.className = "artwork__price";
-    price.textContent = formatPrice(artwork.price);
+    price.textContent = formatPrice(artwork.price, artwork.currency);
     plaque.appendChild(price);
 
     var buyBtn = document.createElement("button");
@@ -52,7 +55,7 @@
       fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ priceId: artwork.priceId }),
+        body: JSON.stringify({ artworkId: artwork.id }),
       })
         .then((res) => {
           if (!res.ok) {

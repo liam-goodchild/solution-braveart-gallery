@@ -46,8 +46,8 @@ variable "dns_delegated" {
   default     = false
 }
 
-variable "stripe_secret_key" {
-  description = "Stripe secret API key"
+variable "yoco_secret_key" {
+  description = "Yoco secret API key for Checkout API"
   type        = string
   sensitive   = true
   default     = ""

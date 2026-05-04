@@ -1,5 +1,5 @@
 const { app } = require("@azure/functions");
-const Stripe = require("stripe");
+const crypto = require("node:crypto");
 const { getCachedArtworks } = require("./artworkCache");
 
 // Rate limit: 5 checkout attempts per IP per minute
@@ -30,39 +30,65 @@ app.http("checkout", {
 
     const body = await request.json();
 
-    if (!body.priceId) {
+    if (!body.artworkId) {
       return {
         status: 400,
-        jsonBody: { error: "priceId is required" },
+        jsonBody: { error: "artworkId is required" },
       };
     }
 
     const artworks = await getCachedArtworks();
-    const validPriceIds = new Set(artworks.map((a) => a.priceId));
-    if (!validPriceIds.has(body.priceId)) {
+    const artwork = artworks.find((a) => a.id === body.artworkId);
+    if (!artwork) {
       return {
         status: 400,
-        jsonBody: { error: "Invalid priceId" },
+        jsonBody: { error: "Invalid artworkId" },
       };
     }
 
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+    const yocoSecretKey = process.env.YOCO_SECRET_KEY;
     const frontendUrl = process.env.FRONTEND_URL;
 
-    const session = await stripe.checkout.sessions.create({
-      mode: "payment",
-      line_items: [
-        {
-          price: body.priceId,
-          quantity: 1,
+    if (!yocoSecretKey) {
+      return {
+        status: 500,
+        jsonBody: { error: "Payment gateway is not configured" },
+      };
+    }
+
+    const checkoutResponse = await fetch("https://payments.yoco.com/api/checkouts", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${yocoSecretKey}`,
+        "Content-Type": "application/json",
+        "Idempotency-Key": crypto.randomUUID(),
+      },
+      body: JSON.stringify({
+        amount: artwork.price,
+        currency: artwork.currency ?? "ZAR",
+        successUrl: `${frontendUrl}/gallery?checkout=success`,
+        cancelUrl: `${frontendUrl}/gallery?checkout=cancelled`,
+        failureUrl: `${frontendUrl}/gallery?checkout=failed`,
+        externalId: artwork.id,
+        clientReferenceId: artwork.id,
+        metadata: {
+          artworkId: artwork.id,
+          artworkName: artwork.name,
         },
-      ],
-      success_url: `${frontendUrl}/gallery?checkout=success`,
-      cancel_url: `${frontendUrl}/gallery?checkout=cancelled`,
+      }),
     });
 
+    if (!checkoutResponse.ok) {
+      return {
+        status: 502,
+        jsonBody: { error: "Could not create Yoco checkout" },
+      };
+    }
+
+    const checkout = await checkoutResponse.json();
+
     return {
-      jsonBody: { url: session.url },
+      jsonBody: { url: checkout.redirectUrl },
     };
   },
 });
