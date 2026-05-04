@@ -6,22 +6,22 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Spectral:ital,wght@0,300;0,400;1,300;1,400&display=swap");
 
 :root {
-  --bg-void:      #050103;
-  --bg-deep:      #080205;
-  --bg-card:      #0c0307;
-  --bg-panel:     #0f0408;
-  --blood:        #c00000;
-  --blood-mid:    #d90000;
-  --blood-hi:     #f01515;
-  --blood-line:   rgb(210 0 0 / 35%);
-  --blood-rim:    rgb(210 0 0 / 50%);
-  --ivory:        #ede5d8;
-  --ivory-dim:    #a89e8e;
-  --ivory-ghost:  #5e5448;
-  --danger:       #c44;
+  --bg-void: #050103;
+  --bg-deep: #080205;
+  --bg-card: #0c0307;
+  --bg-panel: #0f0408;
+  --blood: #c00000;
+  --blood-mid: #d90000;
+  --blood-hi: #f01515;
+  --blood-line: rgb(210 0 0 / 35%);
+  --blood-rim: rgb(210 0 0 / 50%);
+  --ivory: #ede5d8;
+  --ivory-dim: #a89e8e;
+  --ivory-ghost: #5e5448;
+  --danger: #c44;
   --danger-hover: #d66;
-  --border-red:   rgb(210 0 0 / 32%);
-  --shadow-deep:  rgb(2 0 2 / 80%);
+  --border-red: rgb(210 0 0 / 32%);
+  --shadow-deep: rgb(2 0 2 / 80%);
 }
 
 *,
@@ -44,8 +44,13 @@ html {
 
 body {
   font-family: "Spectral", Georgia, serif;
-  background:
-    radial-gradient(ellipse at 40% 30%, #3a0505 0%, #1a0202 35%, #0a0101 70%, #050103 100%);
+  background: radial-gradient(
+    ellipse at 40% 30%,
+    #3a0505 0%,
+    #1a0202 35%,
+    #0a0101 70%,
+    #050103 100%
+  );
   background-attachment: fixed;
   color: var(--ivory);
   line-height: 1.7;
@@ -80,7 +85,11 @@ img {
   inset: 0;
   pointer-events: none;
   z-index: 9998;
-  background: radial-gradient(ellipse at 50% 50%, transparent 40%, rgb(5 1 3 / 55%) 100%);
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    transparent 40%,
+    rgb(5 1 3 / 55%) 100%
+  );
 }
 
 /* ---- Canvas Texture Background ---- */
@@ -165,7 +174,13 @@ img {
   justify-content: center;
   text-align: center;
   overflow: hidden;
-  background: radial-gradient(ellipse at 40% 55%, #3a0505 0%, #1a0202 35%, #0a0101 70%, #050103 100%);
+  background: radial-gradient(
+    ellipse at 40% 55%,
+    #3a0505 0%,
+    #1a0202 35%,
+    #0a0101 70%,
+    #050103 100%
+  );
 }
 
 /* Artwork image background — populated by home.js */
@@ -184,15 +199,28 @@ img {
   inset: 0;
   background:
     rgb(5 1 3 / 72%),
-    radial-gradient(ellipse 70% 60% at 30% 25%, rgb(160 0 0 / 20%) 0%, transparent 100%),
-    radial-gradient(ellipse 60% 50% at 70% 75%, rgb(120 0 0 / 14%) 0%, transparent 100%);
+    radial-gradient(
+      ellipse 70% 60% at 30% 25%,
+      rgb(160 0 0 / 20%) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 60% 50% at 70% 75%,
+      rgb(120 0 0 / 14%) 0%,
+      transparent 100%
+    );
   z-index: 1;
 }
 
 /* Pulsing blood-light — candlelight behind the painting */
 @keyframes breathe {
-  0%, 100% { opacity: 0.5; }
-  50%       { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .hero__glow {
@@ -350,7 +378,7 @@ img {
   font-weight: 400;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  line-height: 1.0;
+  line-height: 1;
   margin: 1rem 0 2rem;
   color: var(--ivory);
   word-break: keep-all;
@@ -526,7 +554,11 @@ img {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 110%, rgb(210 0 0 / 14%) 0%, transparent 62%);
+  background: radial-gradient(
+    ellipse at 50% 110%,
+    rgb(210 0 0 / 14%) 0%,
+    transparent 62%
+  );
   z-index: 1;
   pointer-events: none;
   opacity: 0;

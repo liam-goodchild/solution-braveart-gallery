@@ -81,9 +81,9 @@ The frontend is static files — serve `frontend/` with any HTTP server, or use 
 
 ### Required Environment Variables
 
-| Variable          | Used by                               |
-| ----------------- | ------------------------------------- |
-| `YOCO_SECRET_KEY` | `checkout`                            |
+| Variable          | Used by                                |
+| ----------------- | -------------------------------------- |
+| `YOCO_SECRET_KEY` | `checkout`                             |
 | `FRONTEND_URL`    | `checkout` success/cancel/failure URLs |
 
 ### API Endpoints

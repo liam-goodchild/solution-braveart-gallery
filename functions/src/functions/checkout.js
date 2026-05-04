@@ -59,27 +59,30 @@ app.http("checkout", {
       };
     }
 
-    const checkoutResponse = await fetch("https://payments.yoco.com/api/checkouts", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${yocoSecretKey}`,
-        "Content-Type": "application/json",
-        "Idempotency-Key": crypto.randomUUID(),
-      },
-      body: JSON.stringify({
-        amount: artwork.price,
-        currency: artwork.currency ?? "ZAR",
-        successUrl: `${frontendUrl}/gallery?checkout=success`,
-        cancelUrl: `${frontendUrl}/gallery?checkout=cancelled`,
-        failureUrl: `${frontendUrl}/gallery?checkout=failed`,
-        externalId: artwork.id,
-        clientReferenceId: artwork.id,
-        metadata: {
-          artworkId: artwork.id,
-          artworkName: artwork.name,
+    const checkoutResponse = await fetch(
+      "https://payments.yoco.com/api/checkouts",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${yocoSecretKey}`,
+          "Content-Type": "application/json",
+          "Idempotency-Key": crypto.randomUUID(),
         },
-      }),
-    });
+        body: JSON.stringify({
+          amount: artwork.price,
+          currency: artwork.currency ?? "ZAR",
+          successUrl: `${frontendUrl}/gallery?checkout=success`,
+          cancelUrl: `${frontendUrl}/gallery?checkout=cancelled`,
+          failureUrl: `${frontendUrl}/gallery?checkout=failed`,
+          externalId: artwork.id,
+          clientReferenceId: artwork.id,
+          metadata: {
+            artworkId: artwork.id,
+            artworkName: artwork.name,
+          },
+        }),
+      },
+    );
 
     if (!checkoutResponse.ok) {
       return {
