@@ -1,3 +1,3 @@
 # solution-braveart-gallery
 
-Buffy Braveart Gallery is a static art-gallery website for browsing and purchasing original artwork. It serves a small catalogue from local JSON/static image assets and starts Yoco hosted checkout sessions through a serverless API.
+Buffy Braveart Gallery is an Azure-hosted art gallery storefront with a static frontend and serverless API. It publishes a catalogue of artworks and creates Yoco checkout sessions for purchases while Terraform manages the supporting Azure resources.
